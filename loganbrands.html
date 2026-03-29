@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Logan Brands — Build Your Brand.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --black:#060606;--charcoal:#0e0e0e;--surface:#141414;--border:#1f1f1f;
+      --muted:#2e2e2e;--text-dim:#505050;--text-mid:#8a8a8a;--text-main:#c8c8c8;
+      --text-bright:#ebebeb;--accent:#b0b0b0;--accent-light:#d4d4d4;--accent-dim:#3a3a3a;
+    }
+    html{scroll-behavior:smooth}
+    body{background:var(--black);color:var(--text-main);font-family:'Cormorant Garamond',serif;overflow-x:hidden;cursor:none}
+
+    .cursor{position:fixed;width:8px;height:8px;background:var(--accent);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%)}
+    .cursor-ring{position:fixed;width:32px;height:32px;border:1px solid rgba(176,176,176,0.35);border-radius:50%;pointer-events:none;z-index:9998;transition:width .2s,height .2s,border-color .2s;transform:translate(-50%,-50%)}
+    body:has(a:hover) .cursor-ring,body:has(button:hover) .cursor-ring{width:48px;height:48px;border-color:var(--accent)}
+
+    /* NAV */
+    nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:28px 60px;background:linear-gradient(to bottom,rgba(6,6,6,0.97),transparent)}
+    .nav-logo{display:flex;align-items:center;gap:14px;text-decoration:none}
+    .nav-logo-mark{font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:300;font-size:1.6rem;color:var(--text-bright);letter-spacing:-.02em;line-height:1}
+    .nav-logo-text{font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.25em;text-transform:uppercase;color:var(--text-dim)}
+    .nav-divider{width:1px;height:24px;background:var(--border)}
+
+    /* HERO */
+    #hero{position:relative;min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:140px 60px 100px;overflow:hidden}
+    .hero-grain{position:absolute;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");background-size:200px;opacity:.5;pointer-events:none}
+    .hero-line-left{position:absolute;top:0;left:120px;width:1px;height:100%;background:linear-gradient(to bottom,transparent,var(--border) 20%,var(--border) 80%,transparent);opacity:.3}
+    .hero-line-right{position:absolute;top:0;right:120px;width:1px;height:100%;background:linear-gradient(to bottom,transparent,var(--border) 20%,var(--border) 80%,transparent);opacity:.3}
+
+    /* LB MONOGRAM */
+    .hero-monogram{position:relative;z-index:2;opacity:0;animation:fadeUp .8s ease .2s forwards;margin-bottom:40px}
+    .lb-mark{font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:300;font-size:clamp(100px,16vw,180px);color:var(--text-bright);line-height:1;letter-spacing:-.04em;position:relative;display:inline-block}
+    .lb-mark::after{content:'';position:absolute;bottom:-12px;left:50%;transform:translateX(-50%);width:60%;height:1px;background:linear-gradient(to right,transparent,var(--accent),transparent)}
+    .lb-wordmark{font-family:'DM Mono',monospace;font-size:.7rem;letter-spacing:.45em;text-transform:uppercase;color:var(--text-dim);margin-top:20px}
+
+    .hero-eyebrow{font-family:'DM Mono',monospace;font-size:.65rem;letter-spacing:.3em;text-transform:uppercase;color:var(--accent);margin-bottom:24px;opacity:0;animation:fadeUp .8s ease .4s forwards;position:relative;z-index:2}
+    .hero-heading{font-family:'Bebas Neue',sans-serif;font-size:clamp(64px,9vw,136px);line-height:.9;color:var(--text-bright);letter-spacing:.02em;opacity:0;animation:fadeUp .9s ease .6s forwards;position:relative;z-index:2}
+    .hero-heading em{font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:300;color:var(--accent);display:block}
+    .hero-sub{margin-top:32px;font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:300;font-size:clamp(18px,2vw,24px);color:var(--text-mid);max-width:580px;line-height:1.65;opacity:0;animation:fadeUp .9s ease .8s forwards;position:relative;z-index:2}
+    .hero-cta{margin-top:52px;display:flex;gap:20px;align-items:center;justify-content:center;opacity:0;animation:fadeUp .9s ease 1s forwards;position:relative;z-index:2;flex-wrap:wrap}
+    .btn-primary{display:inline-flex;align-items:center;padding:16px 40px;background:var(--accent);color:var(--black);font-family:'DM Mono',monospace;font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;text-decoration:none;transition:background .3s,transform .2s}
+    .btn-primary:hover{background:var(--accent-light);transform:translateY(-2px)}
+    .btn-ghost{display:inline-flex;align-items:center;padding:16px 40px;border:1px solid var(--border);color:var(--text-mid);font-family:'DM Mono',monospace;font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;text-decoration:none;transition:border-color .3s,color .3s}
+    .btn-ghost:hover{border-color:var(--accent);color:var(--accent)}
+
+    /* SECTION BASE */
+    section{padding:120px 60px}
+    .section-label{font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.35em;text-transform:uppercase;color:var(--accent);margin-bottom:16px;display:flex;align-items:center;gap:16px}
+    .section-label::after{content:'';display:block;width:40px;height:1px;background:var(--accent-dim)}
+    .section-heading{font-family:'Bebas Neue',sans-serif;font-size:clamp(44px,5vw,68px);line-height:1;color:var(--text-bright);margin-bottom:16px}
+    .section-heading em{font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:300;color:var(--accent)}
+
+    /* WHY */
+    #why{background:var(--charcoal)}
+    .why-grid{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:start;max-width:1100px}
+    .why-body p{font-size:1.05rem;font-weight:300;line-height:1.85;color:var(--text-mid);margin-bottom:20px}
+    .why-body p strong{color:var(--text-bright);font-weight:600}
+    .why-stats{display:grid;grid-template-columns:1fr 1fr;gap:2px;margin-top:40px}
+    .why-stat{background:var(--surface);padding:28px 24px;border-bottom:2px solid transparent;transition:border-color .3s}
+    .why-stat:hover{border-color:var(--accent)}
+    .why-stat-num{font-family:'Bebas Neue',sans-serif;font-size:2.8rem;color:var(--accent);line-height:1;margin-bottom:6px}
+    .why-stat-label{font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:var(--text-dim)}
+
+    /* OFFER */
+    #offer{background:var(--black)}
+    .offer-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;margin-top:60px}
+    .offer-card{background:var(--surface);padding:44px 36px;position:relative;overflow:hidden;transition:background .3s}
+    .offer-card::before{content:'';position:absolute;top:0;left:0;width:2px;height:0;background:var(--accent);transition:height .4s ease}
+    .offer-card:hover::before{height:100%}
+    .offer-card:hover{background:#181818}
+    .offer-num{font-family:'Bebas Neue',sans-serif;font-size:3.5rem;color:rgba(176,176,176,0.06);line-height:1;margin-bottom:20px}
+    .offer-title{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:.05em;color:var(--text-bright);margin-bottom:14px}
+    .offer-body{font-size:.95rem;font-weight:300;line-height:1.8;color:var(--text-dim)}
+
+    /* PROCESS */
+    #process{background:var(--charcoal)}
+    .process-steps{display:grid;grid-template-columns:repeat(4,1fr);gap:2px;margin-top:60px}
+    .step{background:var(--surface);padding:40px 32px;position:relative}
+    .step-num{font-family:'Bebas Neue',sans-serif;font-size:5rem;color:rgba(176,176,176,0.05);line-height:1;margin-bottom:16px}
+    .step-title{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;letter-spacing:.05em;color:var(--text-bright);margin-bottom:12px}
+    .step-body{font-size:.9rem;font-weight:300;line-height:1.8;color:var(--text-dim)}
+    .step-connector{position:absolute;top:40px;right:-1px;width:2px;height:40px;background:var(--accent-dim)}
+
+    /* PROOF */
+    #proof{background:var(--black);text-align:center;padding:100px 60px}
+    .proof-quote{font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:300;font-size:clamp(24px,3vw,44px);color:var(--text-bright);max-width:780px;margin:0 auto 24px;line-height:1.45}
+    .proof-quote span{color:var(--accent-light)}
+    .proof-sub{font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.3em;text-transform:uppercase;color:var(--text-dim);margin-bottom:60px}
+    .proof-tags{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:40px}
+    .proof-tag{padding:10px 22px;border:1px solid var(--border);font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.15em;text-transform:uppercase;color:var(--text-dim)}
+
+    /* CONTACT */
+    #contact{background:var(--charcoal);padding:120px 60px;border-top:1px solid var(--border)}
+
+    footer{background:var(--black);padding:40px 60px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border)}
+    .footer-brand{display:flex;align-items:center;gap:12px}
+    .footer-lb{font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:300;font-size:1.3rem;color:var(--text-dim);letter-spacing:-.02em}
+    .footer-name{font-family:'DM Mono',monospace;font-size:.55rem;letter-spacing:.25em;text-transform:uppercase;color:var(--muted)}
+    .footer-copy{font-family:'DM Mono',monospace;font-size:.55rem;letter-spacing:.2em;color:var(--muted);text-transform:uppercase}
+
+    @keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+    .reveal{opacity:0;transform:translateY(30px);transition:opacity .8s ease,transform .8s ease}
+    .reveal.visible{opacity:1;transform:translateY(0)}
+
+    @media(max-width:900px){
+      nav{padding:24px 28px}
+      section,#contact{padding:80px 28px}
+      #hero{padding:120px 28px 80px}
+      .hero-line-left,.hero-line-right{display:none}
+      .why-grid{grid-template-columns:1fr;gap:48px}
+      .offer-grid{grid-template-columns:1fr}
+      .process-steps{grid-template-columns:1fr 1fr}
+      footer{padding:32px 28px;flex-direction:column;gap:16px;text-align:center}
+    }
+  </style>
+</head>
+<body>
+
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
+
+  <nav>
+    <a href="#" class="nav-logo">
+      <div class="nav-logo-mark">LB</div>
+      <div class="nav-divider"></div>
+      <div class="nav-logo-text">Logan Brands</div>
+    </a>
+  </nav>
+
+  <!-- HERO -->
+  <section id="hero">
+    <div class="hero-grain"></div>
+    <div class="hero-line-left"></div>
+    <div class="hero-line-right"></div>
+
+    <div class="hero-monogram">
+      <div class="lb-mark">LB</div>
+      <div class="lb-wordmark">Logan Brands</div>
+    </div>
+
+    <p class="hero-eyebrow">Personal Brand Development · Athletes & Beyond</p>
+    <h1 class="hero-heading">Build Your<br><em>Brand.</em></h1>
+    <p class="hero-sub">You put in the work every day. Your personal brand should reflect that — and open doors beyond the field. We build the presence that attracts NIL deals, recruiters, and real opportunities.</p>
+    <div class="hero-cta">
+      <a href="#contact" class="btn-primary">Start Building</a>
+      <a href="#offer" class="btn-ghost">See What We Offer</a>
+    </div>
+  </section>
+
+  <!-- WHY LOGAN BRANDS -->
+  <section id="why">
+    <div class="why-grid">
+      <div class="reveal">
+        <p class="section-label">Why Logan Brands</p>
+        <h2 class="section-heading">Not an<br><em>agency.</em><br>The proof.</h2>
+      </div>
+      <div class="reveal">
+        <div class="why-body">
+          <p>Logan Brands was built by <strong>Ashton Logan</strong> — a D1 athlete who competed at <strong>Oklahoma</strong> and <strong>Colorado</strong> before MTSU, currently pursuing his <strong>MBA</strong> and building his own brand in real time. The site you're on right now? That's what we build.</p>
+          <p>We know how to build things that look professional, move fast, and don't require a massive budget. Most athletes have no idea this is even possible. We do. And we can build it for you.</p>
+          <p>Freelance developers charge $2,000–$8,000 for a basic site. Boutique brand agencies charge $5,000–$15,000+. And neither of them has ever played a down of college football or knows what NIL actually means for your career. A web developer doesn't know your brand. A brand consultant can't build your site. We do both — built specifically for athletes, delivered fast, and for a fraction of what an agency charges.</p>
+          <p>You don't need a PR agency. You need someone who knows the game, knows the business, and knows how to make you look the part.</p>
+        </div>
+        <div class="why-stats">
+          <div class="why-stat">
+            <div class="why-stat-num">D1</div>
+            <div class="why-stat-label">Founded By An Athlete</div>
+          </div>
+          <div class="why-stat">
+            <div class="why-stat-num">MBA</div>
+            <div class="why-stat-label">Business Backed</div>
+          </div>
+          <div class="why-stat">
+            <div class="why-stat-num">NIL</div>
+            <div class="why-stat-label">Active In The Game</div>
+          </div>
+          <div class="why-stat">
+            <div class="why-stat-num">24H</div>
+            <div class="why-stat-label">Response Time</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHAT WE OFFER -->
+  <section id="offer">
+    <div class="reveal">
+      <p class="section-label">What We Offer</p>
+      <h2 class="section-heading">Built for<br><em>You.</em></h2>
+    </div>
+    <div class="offer-grid">
+      <div class="offer-card reveal">
+        <div class="offer-num">01</div>
+        <div class="offer-title">Personal Brand Website</div>
+        <div class="offer-body">A fully custom, professional website built to showcase who you are — your stats, highlights, story, and contact info. The kind of site that makes coaches and brands take you seriously.</div>
+      </div>
+      <div class="offer-card reveal" style="transition-delay:.1s">
+        <div class="offer-num">02</div>
+        <div class="offer-title">NIL Strategy & Positioning</div>
+        <div class="offer-body">Understanding how to position yourself for NIL deals — what brands want, how to reach out, what to charge, and how to build a following that makes you attractive to sponsors.</div>
+      </div>
+      <div class="offer-card reveal" style="transition-delay:.2s">
+        <div class="offer-num">03</div>
+        <div class="offer-title">Social Media Identity</div>
+        <div class="offer-body">Defining your brand voice, content strategy, and aesthetic so your Instagram and social presence is consistent, intentional, and growing — not just random posts.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section id="process">
+    <div class="reveal">
+      <p class="section-label">The Process</p>
+      <h2 class="section-heading">How It<br><em>Works.</em></h2>
+    </div>
+    <div class="process-steps">
+      <div class="step reveal">
+        <div class="step-num">01</div>
+        <div class="step-title">Reach Out</div>
+        <div class="step-body">Fill out the form below with where you're at and what you're looking to build. No gatekeeping — just a direct conversation.</div>
+        <div class="step-connector"></div>
+      </div>
+      <div class="step reveal" style="transition-delay:.1s">
+        <div class="step-num">02</div>
+        <div class="step-title">Strategy Call</div>
+        <div class="step-body">We get on a call, talk about your goals, your sport, your story, and what opportunities you want to create. Then we build a plan.</div>
+        <div class="step-connector"></div>
+      </div>
+      <div class="step reveal" style="transition-delay:.2s">
+        <div class="step-num">03</div>
+        <div class="step-title">We Build</div>
+        <div class="step-body">We get to work — website, brand identity, content strategy, NIL positioning. Fast, clean, and built to last.</div>
+        <div class="step-connector"></div>
+      </div>
+      <div class="step reveal" style="transition-delay:.3s">
+        <div class="step-num">04</div>
+        <div class="step-title">You Launch</div>
+        <div class="step-body">Your brand goes live. You have the tools, the presence, and the strategy to start attracting the right attention.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROOF -->
+  <section id="proof">
+    <div class="reveal">
+      <p class="proof-quote">"The athletes who win off the field are the ones who treat their <span>name like a brand</span> — before anyone else does it for them."</p>
+      <p class="proof-sub">— Ashton Logan, Founder · Logan Brands</p>
+      <div class="proof-tags">
+        <span class="proof-tag">NIL Strategy</span>
+        <span class="proof-tag">Personal Websites</span>
+        <span class="proof-tag">Social Media</span>
+        <span class="proof-tag">Brand Identity</span>
+        <span class="proof-tag">Athlete-First</span>
+        <span class="proof-tag">MBA Backed</span>
+        <span class="proof-tag">D1 Founded</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact">
+    <div style="max-width:1000px;display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:start">
+      <div>
+        <p class="section-label">Get In Touch</p>
+        <h2 style="font-family:'Bebas Neue',sans-serif;font-size:clamp(44px,5vw,68px);line-height:1;color:var(--text-bright);margin-bottom:16px">Ready to<br><em style="font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:300;color:var(--accent)">Build?</em></h2>
+        <p style="font-size:1rem;font-weight:300;line-height:1.7;color:var(--text-mid);margin-bottom:40px">Fill out the form and we'll get back to you within 24 hours. No pressure, no pitch — just a real conversation about what your brand can become.</p>
+        <div style="display:flex;flex-direction:column;gap:2px">
+          <div style="background:var(--surface);padding:16px 20px;display:flex;gap:16px;align-items:flex-start"><div style="font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--accent);line-height:1;flex-shrink:0">01</div><div style="font-size:.9rem;font-weight:300;line-height:1.6;color:var(--text-mid)"><strong style="color:var(--text-bright)">You fill this out</strong> — takes 2 minutes. Tell us where you're at and what you're looking for.</div></div>
+          <div style="background:var(--surface);padding:16px 20px;display:flex;gap:16px;align-items:flex-start"><div style="font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--accent);line-height:1;flex-shrink:0">02</div><div style="font-size:.9rem;font-weight:300;line-height:1.6;color:var(--text-mid)"><strong style="color:var(--text-bright)">We review and respond</strong> — within 24 hours, we'll reach out to your email directly.</div></div>
+          <div style="background:var(--surface);padding:16px 20px;display:flex;gap:16px;align-items:flex-start"><div style="font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--accent);line-height:1;flex-shrink:0">03</div><div style="font-size:.9rem;font-weight:300;line-height:1.6;color:var(--text-mid)"><strong style="color:var(--text-bright)">We get on a call</strong> — free strategy call to figure out exactly what you need.</div></div>
+          <div style="background:var(--surface);padding:16px 20px;display:flex;gap:16px;align-items:flex-start"><div style="font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--accent);line-height:1;flex-shrink:0">04</div><div style="font-size:.9rem;font-weight:300;line-height:1.6;color:var(--text-mid)"><strong style="color:var(--text-bright)">We build</strong> — website, brand, NIL strategy. Fast, clean, done.</div></div>
+        </div>
+      </div>
+      <div>
+        <form id="intakeForm" action="https://formspree.io/f/xnjopakq" method="POST" style="display:flex;flex-direction:column;gap:12px">
+          <div style="display:flex;flex-direction:column;gap:4px"><div style="font-family:'DM Mono',monospace;font-size:.58rem;letter-spacing:.2em;text-transform:uppercase;color:var(--text-dim)">Your Name</div><input type="text" name="name" placeholder="First Last" required style="background:var(--surface);border:1px solid var(--border);padding:14px 18px;color:var(--text-bright);font-family:'DM Mono',monospace;font-size:.7rem;letter-spacing:.1em;outline:none;transition:border-color .3s;width:100%" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'"/></div>
+          <div style="display:flex;flex-direction:column;gap:4px"><div style="font-family:'DM Mono',monospace;font-size:.58rem;letter-spacing:.2em;text-transform:uppercase;color:var(--text-dim)">Your Email</div><input type="email" name="email" placeholder="you@email.com" required style="background:var(--surface);border:1px solid var(--border);padding:14px 18px;color:var(--text-bright);font-family:'DM Mono',monospace;font-size:.7rem;letter-spacing:.1em;outline:none;transition:border-color .3s;width:100%" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'"/></div>
+          <div style="display:flex;flex-direction:column;gap:4px"><div style="font-family:'DM Mono',monospace;font-size:.58rem;letter-spacing:.2em;text-transform:uppercase;color:var(--text-dim)">Sport & School</div><input type="text" name="sport_school" placeholder="e.g. QB — MTSU" required style="background:var(--surface);border:1px solid var(--border);padding:14px 18px;color:var(--text-bright);font-family:'DM Mono',monospace;font-size:.7rem;letter-spacing:.1em;outline:none;transition:border-color .3s;width:100%" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'"/></div>
+          <div style="display:flex;flex-direction:column;gap:4px"><div style="font-family:'DM Mono',monospace;font-size:.58rem;letter-spacing:.2em;text-transform:uppercase;color:var(--text-dim)">Instagram Following</div><select name="following" required style="background:var(--surface);border:1px solid var(--border);padding:14px 18px;color:var(--text-mid);font-family:'DM Mono',monospace;font-size:.7rem;letter-spacing:.1em;outline:none;cursor:pointer;width:100%"><option value="" disabled selected>Current followers</option><option>Under 1K</option><option>1K – 5K</option><option>5K – 10K</option><option>10K – 50K</option><option>50K+</option></select></div>
+          <div style="display:flex;flex-direction:column;gap:4px"><div style="font-family:'DM Mono',monospace;font-size:.58rem;letter-spacing:.2em;text-transform:uppercase;color:var(--text-dim)">What Do You Need?</div><select name="service" required style="background:var(--surface);border:1px solid var(--border);padding:14px 18px;color:var(--text-mid);font-family:'DM Mono',monospace;font-size:.7rem;letter-spacing:.1em;outline:none;cursor:pointer;width:100%"><option value="" disabled selected>Select a service</option><option>Personal Brand Website</option><option>NIL Strategy & Positioning</option><option>Social Media Identity</option><option>Full Brand Package</option><option>Not sure — just want to talk</option></select></div>
+          <div style="display:flex;flex-direction:column;gap:4px"><div style="font-family:'DM Mono',monospace;font-size:.58rem;letter-spacing:.2em;text-transform:uppercase;color:var(--text-dim)">Tell Us About Yourself</div><textarea name="message" placeholder="Where are you at in your career? What opportunities are you trying to create?" rows="4" style="background:var(--surface);border:1px solid var(--border);padding:14px 18px;color:var(--text-bright);font-family:'DM Mono',monospace;font-size:.7rem;letter-spacing:.1em;outline:none;resize:none;transition:border-color .3s;width:100%" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'"></textarea></div>
+          <button type="submit" style="padding:16px;background:var(--accent);color:var(--black);font-family:'DM Mono',monospace;font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;border:none;cursor:pointer;transition:background .3s">Send It →</button>
+          <p id="formSuccess" style="display:none;font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.15em;color:var(--accent);text-align:center;padding:16px;background:var(--surface);border:1px solid var(--border)">✓ Got it! We'll be in touch within 24 hours.</p>
+        </form>
+        <script>
+          document.getElementById('intakeForm').addEventListener('submit',async function(e){
+            e.preventDefault();
+            const data=new FormData(this);
+            const r=await fetch('https://formspree.io/f/xnjopakq',{method:'POST',body:data,headers:{'Accept':'application/json'}});
+            if(r.ok){this.reset();document.getElementById('formSuccess').style.display='block';}
+          });
+        </script>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-brand">
+      <div class="footer-lb">LB</div>
+      <div class="footer-name">Logan Brands</div>
+    </div>
+    <div class="footer-copy">© 2026 Logan Brands · loganbrands.com</div>
+  </footer>
+
+  <script>
+    const cursor=document.getElementById('cursor'),ring=document.getElementById('cursorRing');
+    let mx=0,my=0,rx=0,ry=0;
+    document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY});
+    (function animate(){
+      cursor.style.left=mx+'px';cursor.style.top=my+'px';
+      rx+=(mx-rx)*.12;ry+=(my-ry)*.12;
+      ring.style.left=rx+'px';ring.style.top=ry+'px';
+      requestAnimationFrame(animate);
+    })();
+    const obs=new IntersectionObserver(entries=>{
+      entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible')});
+    },{threshold:.08});
+    document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+  </script>
+</body>
+</html>
