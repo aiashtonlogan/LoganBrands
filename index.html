@@ -109,6 +109,10 @@
     .reveal{opacity:0;transform:translateY(30px);transition:opacity .8s ease,transform .8s ease}
     .reveal.visible{opacity:1;transform:translateY(0)}
 
+    @media (hover: none) and (pointer: coarse) {
+      * { cursor: none !important; }
+    }
+
     @media(max-width:900px){
       nav{padding:24px 28px}
       section,#contact{padding:80px 28px}
