@@ -7,6 +7,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
     :root{
@@ -19,10 +21,10 @@
 
     .cursor{position:fixed;width:8px;height:8px;background:var(--accent);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%)}
     .cursor-ring{position:fixed;width:32px;height:32px;border:1px solid rgba(176,176,176,0.35);border-radius:50%;pointer-events:none;z-index:9998;transition:width .2s,height .2s,border-color .2s;transform:translate(-50%,-50%)}
-    body:has(a:hover) .cursor-ring,body:has(button:hover) .cursor-ring{width:48px;height:48px;border-color:var(--accent)}
+    body:has(a:hover) .cursor-ring,body:has(button:hover) .cursor-ring,body:has(.offer-card:hover) .cursor-ring,body:has(.step:hover) .cursor-ring,body:has(.why-stat:hover) .cursor-ring{width:48px;height:48px;border-color:var(--accent)}
 
     /* NAV */
-    nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:28px 60px;background:linear-gradient(to bottom,rgba(6,6,6,0.97),transparent)}
+    nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:28px 60px;background:linear-gradient(to bottom,rgba(6,6,6,0.97),transparent);transition:background .4s,backdrop-filter .4s,-webkit-backdrop-filter .4s}
     .nav-logo{display:flex;align-items:center;gap:14px;text-decoration:none}
     .nav-logo-mark{font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:300;font-size:1.6rem;color:var(--text-bright);letter-spacing:-.02em;line-height:1}
     .nav-logo-text{font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.25em;text-transform:uppercase;color:var(--text-dim)}
@@ -63,18 +65,18 @@
     .why-body p{font-size:1.05rem;font-weight:300;line-height:1.85;color:var(--text-mid);margin-bottom:20px}
     .why-body p strong{color:var(--text-bright);font-weight:600}
     .why-stats{display:grid;grid-template-columns:1fr 1fr;gap:2px;margin-top:40px}
-    .why-stat{background:var(--surface);padding:28px 24px;border-bottom:2px solid transparent;transition:border-color .3s}
-    .why-stat:hover{border-color:var(--accent)}
+    .why-stat{background:var(--surface);padding:28px 24px;border-bottom:2px solid transparent;transition:border-color .3s,transform .35s ease}
+    .why-stat:hover{border-color:var(--accent);transform:translateY(-4px)}
     .why-stat-num{font-family:'Bebas Neue',sans-serif;font-size:2.8rem;color:var(--accent);line-height:1;margin-bottom:6px}
     .why-stat-label{font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:var(--text-dim)}
 
     /* OFFER */
     #offer{background:var(--black)}
     .offer-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;margin-top:60px}
-    .offer-card{background:var(--surface);padding:44px 36px;position:relative;overflow:hidden;transition:background .3s}
+    .offer-card{background:var(--surface);padding:44px 36px;position:relative;overflow:hidden;transition:background .3s,transform .35s ease}
     .offer-card::before{content:'';position:absolute;top:0;left:0;width:2px;height:0;background:var(--accent);transition:height .4s ease}
     .offer-card:hover::before{height:100%}
-    .offer-card:hover{background:#181818}
+    .offer-card:hover{background:#181818;transform:translateY(-4px)}
     .offer-num{font-family:'Bebas Neue',sans-serif;font-size:3.5rem;color:rgba(176,176,176,0.06);line-height:1;margin-bottom:20px}
     .offer-title{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:.05em;color:var(--text-bright);margin-bottom:14px}
     .offer-body{font-size:.95rem;font-weight:300;line-height:1.8;color:var(--text-dim)}
@@ -82,7 +84,8 @@
     /* PROCESS */
     #process{background:var(--charcoal)}
     .process-steps{display:grid;grid-template-columns:repeat(4,1fr);gap:2px;margin-top:60px}
-    .step{background:var(--surface);padding:40px 32px;position:relative}
+    .step{background:var(--surface);padding:40px 32px;position:relative;transition:transform .35s ease}
+    .step:hover{transform:translateY(-4px)}
     .step-num{font-family:'Bebas Neue',sans-serif;font-size:5rem;color:rgba(176,176,176,0.05);line-height:1;margin-bottom:16px}
     .step-title{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;letter-spacing:.05em;color:var(--text-bright);margin-bottom:12px}
     .step-body{font-size:.9rem;font-weight:300;line-height:1.8;color:var(--text-dim)}
@@ -129,6 +132,19 @@
     .mobile-menu ul a { font-family:'Bebas Neue',sans-serif; font-size:clamp(2.5rem,10vw,4rem); text-transform:uppercase; letter-spacing:2px; color:var(--text-bright); text-decoration:none; transition:color .2s; }
     .mobile-menu ul a:hover { color:var(--accent); }
     @media(max-width:960px) { .nav-hamburger { display:flex; } .nav-links { display:none; } }
+
+    /* Word reveal */
+    .word-wrap{display:inline-block;overflow:hidden;vertical-align:bottom}
+    .hero-word{display:inline-block}
+
+    /* Nav scroll blur */
+    nav.nav-scrolled{background:rgba(6,6,6,0.94)!important;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+
+    /* Marquee strip */
+    .marquee-strip{overflow:hidden;background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:18px 0;white-space:nowrap;cursor:default}
+    .marquee-track{display:inline-flex;align-items:center;will-change:transform}
+    .marquee-item{font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.28em;text-transform:uppercase;color:var(--text-dim);padding:0 28px;flex-shrink:0}
+    .marquee-sep{color:var(--accent);opacity:.45;flex-shrink:0}
 
     @media(max-width:900px){
       nav{padding:24px 28px}
@@ -192,6 +208,28 @@
       <a href="#offer" class="btn-ghost">See What We Offer</a>
     </div>
   </section>
+
+  <!-- MARQUEE STRIP -->
+  <div class="marquee-strip" aria-hidden="true">
+    <div class="marquee-track">
+      <span class="marquee-item">Personal Brand Website</span><span class="marquee-sep">·</span>
+      <span class="marquee-item">NIL Strategy &amp; Positioning</span><span class="marquee-sep">·</span>
+      <span class="marquee-item">Social Media Identity</span><span class="marquee-sep">·</span>
+      <span class="marquee-item">Brand Identity</span><span class="marquee-sep">·</span>
+      <span class="marquee-item">Athlete-First</span><span class="marquee-sep">·</span>
+      <span class="marquee-item">D1 Founded</span><span class="marquee-sep">·</span>
+      <span class="marquee-item">MBA Backed</span><span class="marquee-sep">·</span>
+      <span class="marquee-item">Full Brand Package</span><span class="marquee-sep">·</span>
+      <span class="marquee-item">Personal Brand Website</span><span class="marquee-sep">·</span>
+      <span class="marquee-item">NIL Strategy &amp; Positioning</span><span class="marquee-sep">·</span>
+      <span class="marquee-item">Social Media Identity</span><span class="marquee-sep">·</span>
+      <span class="marquee-item">Brand Identity</span><span class="marquee-sep">·</span>
+      <span class="marquee-item">Athlete-First</span><span class="marquee-sep">·</span>
+      <span class="marquee-item">D1 Founded</span><span class="marquee-sep">·</span>
+      <span class="marquee-item">MBA Backed</span><span class="marquee-sep">·</span>
+      <span class="marquee-item">Full Brand Package</span><span class="marquee-sep">·</span>
+    </div>
+  </div>
 
   <!-- WHY LOGAN BRANDS -->
   <section id="why">
@@ -376,10 +414,61 @@
         requestAnimationFrame(animate);
       })();
     }
-    const obs=new IntersectionObserver(entries=>{
-      entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible')});
-    },{threshold:.08});
-    document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+
+    // ── GSAP ──────────────────────────────────────────
+    gsap.registerPlugin(ScrollTrigger);
+
+    // Disable CSS animations on hero elements — GSAP owns this sequence
+    document.querySelectorAll('.hero-monogram,.hero-sub,.hero-cta').forEach(el=>{el.style.animation='none';});
+    // Containers stay visible; word spans slide up from inside
+    document.querySelectorAll('.hero-eyebrow,.hero-heading').forEach(el=>{el.style.animation='none';el.style.opacity='1';});
+
+    // Word-split hero eyebrow
+    const heroEyebrow=document.querySelector('.hero-eyebrow');
+    heroEyebrow.innerHTML=heroEyebrow.textContent.trim().split(/\s+/).map(w=>`<span class="word-wrap"><span class="hero-word">${w}</span></span>`).join(' ');
+
+    // Word-split hero heading (preserve <br> and <em>)
+    const heroHeading=document.querySelector('.hero-heading');
+    heroHeading.innerHTML='<span class="word-wrap"><span class="hero-word">Build</span></span> <span class="word-wrap"><span class="hero-word">Your</span></span><br><em><span class="word-wrap"><span class="hero-word">Brand.</span></span></em>';
+
+    // Set initial hidden states
+    gsap.set('.hero-monogram',{opacity:0,y:28});
+    gsap.set('.hero-sub',{opacity:0,y:20});
+    gsap.set('.hero-cta',{opacity:0,y:20});
+    gsap.set('.hero-word',{y:'110%'});
+
+    // Hero entrance timeline
+    gsap.timeline({delay:.15})
+      .to('.hero-monogram',{opacity:1,y:0,duration:.8,ease:'power2.out'})
+      .to('.hero-eyebrow .hero-word',{y:'0%',duration:.6,stagger:.06,ease:'power3.out'},'-=.3')
+      .to('.hero-heading .hero-word',{y:'0%',duration:.7,stagger:.1,ease:'power3.out'},'-=.35')
+      .to('.hero-sub',{opacity:1,y:0,duration:.8,ease:'power2.out'},'-=.3')
+      .to('.hero-cta',{opacity:1,y:0,duration:.8,ease:'power2.out'},'-=.5');
+
+    // ScrollTrigger: reveal .reveal elements via CSS class
+    gsap.utils.toArray('.reveal').forEach(el=>{
+      ScrollTrigger.create({
+        trigger:el,
+        start:'top 85%',
+        onEnter:()=>el.classList.add('visible')
+      });
+    });
+
+    // ScrollTrigger: contact and footer
+    gsap.from('#contact > div',{opacity:0,y:30,duration:.9,ease:'power2.out',scrollTrigger:{trigger:'#contact',start:'top 80%'}});
+    gsap.from('footer > *',{opacity:0,y:20,duration:.7,ease:'power2.out',stagger:.1,scrollTrigger:{trigger:'footer',start:'top 90%'}});
+
+    // Nav scroll blur
+    window.addEventListener('scroll',()=>{
+      document.querySelector('nav').classList.toggle('nav-scrolled',window.scrollY>60);
+    },{passive:true});
+
+    // Marquee
+    const marqueeTrack=document.querySelector('.marquee-track');
+    if(marqueeTrack){
+      const half=marqueeTrack.scrollWidth/2;
+      gsap.to(marqueeTrack,{x:-half,duration:28,ease:'none',repeat:-1});
+    }
   </script>
 </body>
 </html>
