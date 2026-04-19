@@ -9,6 +9,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
     :root{
@@ -16,7 +17,7 @@
       --muted:#2e2e2e;--text-dim:#505050;--text-mid:#8a8a8a;--text-main:#c8c8c8;
       --text-bright:#ebebeb;--accent:#b0b0b0;--accent-light:#d4d4d4;--accent-dim:#3a3a3a;
     }
-    html{scroll-behavior:smooth}
+    html{scroll-behavior:auto}
     body{background:var(--black);color:var(--text-main);font-family:'Cormorant Garamond',serif;overflow-x:hidden;cursor:none}
 
     .cursor{position:fixed;width:8px;height:8px;background:var(--accent);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%)}
@@ -109,8 +110,10 @@
     .footer-copy{font-family:'DM Mono',monospace;font-size:.55rem;letter-spacing:.2em;color:var(--muted);text-transform:uppercase}
 
     @keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
-    .reveal{opacity:0;transform:translateY(30px);transition:opacity .8s ease,transform .8s ease}
-    .reveal.visible{opacity:1;transform:translateY(0)}
+    .reveal{opacity:0}
+    .reveal.visible{opacity:1}
+    .char{display:inline-block;will-change:transform,opacity}
+    .btn-primary,.btn-ghost{will-change:transform;transform-origin:center center}
 
     @media (hover: none) and (pointer: coarse) {
       * { cursor: none !important; }
@@ -145,6 +148,13 @@
     .marquee-track{display:inline-flex;align-items:center;will-change:transform}
     .marquee-item{font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.28em;text-transform:uppercase;color:var(--text-dim);padding:0 28px;flex-shrink:0}
     .marquee-sep{color:var(--accent);opacity:.45;flex-shrink:0}
+
+    /* Process horizontal scroll — desktop */
+    @media(min-width:901px){
+      #process{overflow:hidden}
+      .process-steps{display:flex!important;gap:2px;flex-wrap:nowrap;width:max-content;margin-top:60px}
+      .step{width:clamp(300px,30vw,400px);flex-shrink:0}
+    }
 
     @media(max-width:900px){
       nav{padding:24px 28px}
@@ -388,7 +398,17 @@
   </footer>
 
   <script>
-    // Hamburger menu
+    // ── Lenis smooth scroll ───────────────────────────
+    const lenis=new Lenis({
+      duration:1.2,
+      easing:t=>Math.min(1,1.001-Math.pow(2,-10*t)),
+      smoothWheel:true
+    });
+    lenis.on('scroll',ScrollTrigger.update);
+    gsap.ticker.add(time=>lenis.raf(time*1000));
+    gsap.ticker.lagSmoothing(0);
+
+    // ── Hamburger ─────────────────────────────────────
     const hamburger=document.getElementById('navHamburger');
     const mobileMenu=document.getElementById('mobileMenu');
     hamburger.addEventListener('click',()=>{
@@ -402,42 +422,42 @@
       document.body.style.overflow='';
     }
 
-    // Custom cursor (desktop only)
-    if(window.matchMedia('(hover:hover) and (pointer:fine)').matches){
+    // ── Custom cursor (desktop only) ──────────────────
+    const isFine=window.matchMedia('(hover:hover) and (pointer:fine)').matches;
+    if(isFine){
       const cursor=document.getElementById('cursor'),ring=document.getElementById('cursorRing');
       let mx=0,my=0,rx=0,ry=0;
       document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY});
-      (function animate(){
+      (function tick(){
         cursor.style.left=mx+'px';cursor.style.top=my+'px';
         rx+=(mx-rx)*.12;ry+=(my-ry)*.12;
         ring.style.left=rx+'px';ring.style.top=ry+'px';
-        requestAnimationFrame(animate);
+        requestAnimationFrame(tick);
       })();
     }
 
-    // ── GSAP ──────────────────────────────────────────
+    // ── GSAP init ─────────────────────────────────────
     gsap.registerPlugin(ScrollTrigger);
 
-    // Disable CSS animations on hero elements — GSAP owns this sequence
+    // ── Hero: hand off from CSS to GSAP ───────────────
     document.querySelectorAll('.hero-monogram,.hero-sub,.hero-cta').forEach(el=>{el.style.animation='none';});
-    // Containers stay visible; word spans slide up from inside
     document.querySelectorAll('.hero-eyebrow,.hero-heading').forEach(el=>{el.style.animation='none';el.style.opacity='1';});
 
-    // Word-split hero eyebrow
     const heroEyebrow=document.querySelector('.hero-eyebrow');
-    heroEyebrow.innerHTML=heroEyebrow.textContent.trim().split(/\s+/).map(w=>`<span class="word-wrap"><span class="hero-word">${w}</span></span>`).join(' ');
+    heroEyebrow.innerHTML=heroEyebrow.textContent.trim().split(/\s+/).map(w=>
+      `<span class="word-wrap"><span class="hero-word">${w}</span></span>`).join(' ');
 
-    // Word-split hero heading (preserve <br> and <em>)
     const heroHeading=document.querySelector('.hero-heading');
-    heroHeading.innerHTML='<span class="word-wrap"><span class="hero-word">Build</span></span> <span class="word-wrap"><span class="hero-word">Your</span></span><br><em><span class="word-wrap"><span class="hero-word">Brand.</span></span></em>';
+    heroHeading.innerHTML=
+      '<span class="word-wrap"><span class="hero-word">Build</span></span> '+
+      '<span class="word-wrap"><span class="hero-word">Your</span></span>'+
+      '<br><em><span class="word-wrap"><span class="hero-word">Brand.</span></span></em>';
 
-    // Set initial hidden states
     gsap.set('.hero-monogram',{opacity:0,y:28});
     gsap.set('.hero-sub',{opacity:0,y:20});
     gsap.set('.hero-cta',{opacity:0,y:20});
     gsap.set('.hero-word',{y:'110%'});
 
-    // Hero entrance timeline
     gsap.timeline({delay:.15})
       .to('.hero-monogram',{opacity:1,y:0,duration:.8,ease:'power2.out'})
       .to('.hero-eyebrow .hero-word',{y:'0%',duration:.6,stagger:.06,ease:'power3.out'},'-=.3')
@@ -445,25 +465,132 @@
       .to('.hero-sub',{opacity:1,y:0,duration:.8,ease:'power2.out'},'-=.3')
       .to('.hero-cta',{opacity:1,y:0,duration:.8,ease:'power2.out'},'-=.5');
 
-    // ScrollTrigger: reveal .reveal elements via CSS class
-    gsap.utils.toArray('.reveal').forEach(el=>{
+    // ── Hero parallax ─────────────────────────────────
+    const heroST={trigger:'#hero',start:'top top',end:'bottom top',scrub:true};
+    gsap.to('.hero-grain',{y:'-25%',ease:'none',scrollTrigger:heroST});
+    gsap.to('.hero-monogram',{y:'-55px',ease:'none',scrollTrigger:heroST});
+    gsap.to('.hero-line-left,.hero-line-right',{y:'-35px',ease:'none',scrollTrigger:heroST});
+
+    // ── Letter-by-letter for section headings ─────────
+    function splitChars(el){
+      function walk(node){
+        if(node.nodeType===3){
+          const frag=document.createDocumentFragment();
+          [...node.textContent].forEach(ch=>{
+            if(ch===' '){frag.appendChild(document.createTextNode(' '));}
+            else{const s=document.createElement('span');s.className='char';s.textContent=ch;frag.appendChild(s);}
+          });
+          node.parentNode.replaceChild(frag,node);
+        } else if(node.nodeType===1&&node.nodeName!=='BR'){
+          [...node.childNodes].forEach(walk);
+        }
+      }
+      [...el.childNodes].forEach(walk);
+    }
+
+    document.querySelectorAll('.section-heading').forEach(h=>{
+      splitChars(h);
+      const chars=h.querySelectorAll('.char');
+      gsap.set(chars,{opacity:0,y:'70%'});
       ScrollTrigger.create({
-        trigger:el,
-        start:'top 85%',
-        onEnter:()=>el.classList.add('visible')
+        trigger:h,start:'top 89%',
+        onEnter:()=>gsap.to(chars,{opacity:1,y:'0%',duration:.55,stagger:.028,ease:'power3.out'})
       });
     });
 
-    // ScrollTrigger: contact and footer
-    gsap.from('#contact > div',{opacity:0,y:30,duration:.9,ease:'power2.out',scrollTrigger:{trigger:'#contact',start:'top 80%'}});
-    gsap.from('footer > *',{opacity:0,y:20,duration:.7,ease:'power2.out',stagger:.1,scrollTrigger:{trigger:'footer',start:'top 90%'}});
+    // ── Number counters ───────────────────────────────
+    document.querySelectorAll('.why-stat-num').forEach(el=>{
+      const txt=el.textContent.trim();
+      const m=txt.match(/^(\d+)/);
+      if(m){
+        const target=parseInt(m[1]),suffix=txt.slice(m[0].length);
+        el.textContent='0'+suffix;
+        ScrollTrigger.create({
+          trigger:el,start:'top 90%',once:true,
+          onEnter:()=>gsap.to({n:0},{n:target,duration:1.6,ease:'power2.out',
+            onUpdate:function(){el.textContent=Math.round(this.targets()[0].n)+suffix;}
+          })
+        });
+      }
+    });
 
-    // Nav scroll blur
-    window.addEventListener('scroll',()=>{
-      document.querySelector('nav').classList.toggle('nav-scrolled',window.scrollY>60);
-    },{passive:true});
+    // ── Stagger reveals ───────────────────────────────
+    gsap.utils.toArray('.reveal').forEach(el=>{
+      gsap.set(el,{opacity:0,y:40});
+      ScrollTrigger.create({
+        trigger:el,start:'top 85%',
+        onEnter:()=>gsap.to(el,{
+          opacity:1,y:0,duration:.8,ease:'power3.out',
+          delay:parseFloat(el.style.transitionDelay)||0
+        })
+      });
+    });
 
-    // Marquee
+    // Proof tags stagger
+    gsap.set('.proof-tag',{opacity:0,y:14,scale:.95});
+    ScrollTrigger.create({
+      trigger:'.proof-tags',start:'top 88%',
+      onEnter:()=>gsap.to('.proof-tag',{opacity:1,y:0,scale:1,duration:.45,stagger:.07,ease:'back.out(1.5)'})
+    });
+
+    // Contact cols + footer
+    gsap.from('#contact > div > *',{opacity:0,y:30,duration:.85,stagger:.12,ease:'power3.out',scrollTrigger:{trigger:'#contact',start:'top 78%'}});
+    gsap.from('footer > *',{opacity:0,y:18,duration:.65,stagger:.1,ease:'power2.out',scrollTrigger:{trigger:'footer',start:'top 92%'}});
+
+    // ── Process: horizontal scroll (desktop) ──────────
+    if(window.matchMedia('(min-width:901px)').matches){
+      const stepsEl=document.querySelector('.process-steps');
+      // detach steps from .reveal so horizontal scroll controls them
+      stepsEl.querySelectorAll('.step').forEach(s=>{
+        s.classList.remove('reveal');
+        gsap.set(s,{opacity:1,y:0});
+      });
+      const getAmt=()=>Math.max(0,stepsEl.scrollWidth-(window.innerWidth-120));
+      gsap.to(stepsEl,{
+        x:()=>-getAmt(),
+        ease:'none',
+        scrollTrigger:{
+          trigger:'#process',
+          start:'top top',
+          end:()=>`+=${getAmt()}`,
+          pin:true,
+          scrub:1.2,
+          anticipatePin:1,
+          invalidateOnRefresh:true,
+        }
+      });
+    }
+
+    // ── Image / element scale on scroll ───────────────
+    // Applied to the LB monogram and offer cards as proxy for images
+    gsap.utils.toArray('.offer-card,.step').forEach(el=>{
+      gsap.fromTo(el,{scale:1.05},{
+        scale:1,ease:'none',
+        scrollTrigger:{trigger:el,start:'top 90%',end:'top 40%',scrub:true}
+      });
+    });
+
+    // ── Magnetic buttons ──────────────────────────────
+    if(isFine){
+      document.querySelectorAll('.btn-primary,.btn-ghost').forEach(btn=>{
+        btn.addEventListener('mousemove',e=>{
+          const r=btn.getBoundingClientRect();
+          const dx=(e.clientX-(r.left+r.width/2))*.28;
+          const dy=(e.clientY-(r.top+r.height/2))*.28;
+          gsap.to(btn,{x:dx,y:dy,duration:.3,ease:'power2.out',overwrite:'auto'});
+        });
+        btn.addEventListener('mouseleave',()=>{
+          gsap.to(btn,{x:0,y:0,duration:.65,ease:'elastic.out(1,.35)',overwrite:'auto'});
+        });
+      });
+    }
+
+    // ── Nav blur via Lenis scroll event ───────────────
+    lenis.on('scroll',({scroll})=>{
+      document.querySelector('nav').classList.toggle('nav-scrolled',scroll>60);
+    });
+
+    // ── Marquee ───────────────────────────────────────
     const marqueeTrack=document.querySelector('.marquee-track');
     if(marqueeTrack){
       const half=marqueeTrack.scrollWidth/2;
