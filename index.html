@@ -165,6 +165,12 @@
     #intake-form .btn{width:100%;padding:16px;background:var(--accent);color:var(--black);font-family:'DM Mono',monospace;font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;border:none;cursor:pointer;transition:background .3s;margin-top:8px;will-change:transform;transform-origin:center}
     #intake-form .btn:hover{background:var(--accent-light)}
     #form-success{display:none;font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.15em;color:var(--accent);text-align:center;padding:16px;background:var(--surface);border:1px solid var(--border);margin-top:12px}
+    #form-trigger-wrap{text-align:center;padding:48px 0 24px;transition:opacity .4s ease,transform .4s ease}
+    #form-trigger-wrap.fading{opacity:0;transform:translateY(-8px);pointer-events:none}
+    #form-drawer{display:none;opacity:0;transform:translateY(28px);transition:opacity .55s ease,transform .55s ease}
+    #form-drawer.open{opacity:1;transform:translateY(0)}
+    .form-close{display:block;text-align:center;margin-top:48px;font-family:'DM Mono',monospace;font-size:.58rem;letter-spacing:.22em;text-transform:uppercase;color:var(--text-dim);text-decoration:none;cursor:pointer;transition:color .25s;background:none;border:none;width:100%;padding:8px 0}
+    .form-close:hover{color:var(--accent)}
 
     /* Process horizontal scroll — desktop */
     @media(min-width:901px){
@@ -384,6 +390,10 @@
         </div>
       </div>
       <div>
+        <div id="form-trigger-wrap">
+          <button id="form-trigger-btn" class="btn-primary" style="font-family:'DM Mono',monospace;font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;cursor:pointer;border:none">Get Started →</button>
+        </div>
+        <div id="form-drawer">
         <form id="intake-form" action="https://formspree.io/f/xnjopakq" method="POST">
 
           <div class="form-section-label">01 — You</div>
@@ -507,7 +517,10 @@
           <p id="form-success">✓ Got it! We'll be in touch within 24 hours.</p>
 
         </form>
+        <button class="form-close" id="form-close">— or scroll back up</button>
+        </div><!-- /form-drawer -->
         <script>
+          // Form submit
           document.getElementById('intake-form').addEventListener('submit',async function(e){
             e.preventDefault();
             const btn=this.querySelector('.btn');
@@ -515,6 +528,44 @@
             const r=await fetch('https://formspree.io/f/xnjopakq',{method:'POST',body:new FormData(this),headers:{'Accept':'application/json'}});
             if(r.ok){this.reset();document.getElementById('form-success').style.display='block';btn.style.display='none';}
             else{btn.textContent='Send It →';btn.disabled=false;}
+          });
+
+          // Trigger: fade button out, slide form in
+          document.getElementById('form-trigger-btn').addEventListener('click',function(){
+            const wrap=document.getElementById('form-trigger-wrap');
+            const drawer=document.getElementById('form-drawer');
+            wrap.classList.add('fading');
+            wrap.addEventListener('transitionend',function handler(e){
+              if(e.propertyName!=='opacity')return;
+              wrap.removeEventListener('transitionend',handler);
+              wrap.style.display='none';
+              drawer.style.display='block';
+              requestAnimationFrame(function(){
+                requestAnimationFrame(function(){
+                  drawer.classList.add('open');
+                  drawer.scrollIntoView({behavior:'smooth',block:'start'});
+                });
+              });
+            });
+          });
+
+          // Close: slide form out, fade button back in
+          document.getElementById('form-close').addEventListener('click',function(){
+            const wrap=document.getElementById('form-trigger-wrap');
+            const drawer=document.getElementById('form-drawer');
+            drawer.classList.remove('open');
+            drawer.addEventListener('transitionend',function handler(e){
+              if(e.propertyName!=='opacity')return;
+              drawer.removeEventListener('transitionend',handler);
+              drawer.style.display='none';
+              wrap.style.display='';
+              requestAnimationFrame(function(){
+                requestAnimationFrame(function(){
+                  wrap.classList.remove('fading');
+                  wrap.scrollIntoView({behavior:'smooth',block:'center'});
+                });
+              });
+            });
           });
         </script>
       </div>
