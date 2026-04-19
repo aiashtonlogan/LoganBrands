@@ -149,6 +149,23 @@
     .marquee-item{font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.28em;text-transform:uppercase;color:var(--text-dim);padding:0 28px;flex-shrink:0}
     .marquee-sep{color:var(--accent);opacity:.45;flex-shrink:0}
 
+    /* Intake form */
+    #intake-form{max-width:700px;margin:0 auto}
+    .form-section-label{font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:var(--text-dim);margin:48px 0 24px;padding-bottom:12px;border-bottom:1px solid var(--border)}
+    .form-group{margin-bottom:28px}
+    .form-group>label{display:block;font-family:'DM Mono',monospace;font-size:.68rem;letter-spacing:.05em;color:var(--text-mid);margin-bottom:10px}
+    .form-group input[type="text"],
+    .form-group input[type="email"],
+    .form-group input[type="tel"],
+    .form-group textarea{width:100%;background:#161616;border:1px solid var(--border);color:var(--text-bright);padding:14px 16px;font-size:.85rem;font-family:'Cormorant Garamond',serif;outline:none;transition:border-color .3s;resize:vertical}
+    .form-group input:focus,.form-group textarea:focus{border-color:var(--accent)}
+    .checkbox-group{display:flex;flex-direction:column;gap:12px}
+    .checkbox-label{display:flex;align-items:center;gap:12px;font-family:'DM Mono',monospace;font-size:.62rem;color:var(--text-mid);cursor:pointer;letter-spacing:.03em}
+    .checkbox-label input{width:16px;height:16px;accent-color:var(--accent);cursor:pointer;flex-shrink:0}
+    #intake-form .btn{width:100%;padding:16px;background:var(--accent);color:var(--black);font-family:'DM Mono',monospace;font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;border:none;cursor:pointer;transition:background .3s;margin-top:8px;will-change:transform;transform-origin:center}
+    #intake-form .btn:hover{background:var(--accent-light)}
+    #form-success{display:none;font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.15em;color:var(--accent);text-align:center;padding:16px;background:var(--surface);border:1px solid var(--border);margin-top:12px}
+
     /* Process horizontal scroll — desktop */
     @media(min-width:901px){
       #process{overflow:hidden}
@@ -367,8 +384,139 @@
         </div>
       </div>
       <div>
-        <iframe data-tally-src="https://tally.so/embed/ODBoNa?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1" loading="lazy" width="100%" height="400" frameborder="0" marginheight="0" marginwidth="0" title="Build Your Brand - Logan Brands"></iframe>
-        <script>var d=document,w="https://tally.so/widgets/embed.js",v=function(){"undefined"!=typeof Tally?Tally.loadEmbeds():d.querySelectorAll("iframe[data-tally-src]:not([src])").forEach((function(e){e.src=e.dataset.tallySrc}))};if("undefined"!=typeof Tally)v();else if(d.querySelector('script[src="'+w+'"]')==null){var s=d.createElement("script");s.src=w,s.onload=v,s.onerror=v,d.body.appendChild(s);}</script>
+        <form id="intake-form" action="https://formspree.io/f/xnjopakq" method="POST">
+
+          <div class="form-section-label">01 — You</div>
+          <div class="form-group">
+            <label>Full name, sport &amp; position</label>
+            <input type="text" name="name_sport_position" placeholder="e.g. Ashton Logan — Punter, MTSU" required>
+          </div>
+          <div class="form-group">
+            <label>School &amp; year</label>
+            <input type="text" name="school_year" placeholder="e.g. MTSU — Junior" required>
+          </div>
+          <div class="form-group">
+            <label>Outside of sports, what do you want people to know about you?</label>
+            <textarea name="outside_sports" rows="4" placeholder="Be real. This is what makes your brand different."></textarea>
+          </div>
+          <div class="form-group">
+            <label>What's something you've been through that made you who you are?</label>
+            <textarea name="defining_moment" rows="4" placeholder="Don't rush this one."></textarea>
+          </div>
+
+          <div class="form-section-label">02 — Your Why</div>
+          <div class="form-group">
+            <label>Why do you play? What keeps you going when things get hard?</label>
+            <textarea name="why_you_play" rows="4"></textarea>
+          </div>
+          <div class="form-group">
+            <label>What do you want to do after your playing days are over?</label>
+            <textarea name="after_sports" rows="3"></textarea>
+          </div>
+
+          <div class="form-section-label">03 — Your People</div>
+          <div class="form-group">
+            <label>Who are you trying to reach with your brand?</label>
+            <div class="checkbox-group">
+              <label class="checkbox-label"><input type="checkbox" name="audience" value="Fans & followers"> Fans &amp; followers</label>
+              <label class="checkbox-label"><input type="checkbox" name="audience" value="Brands & sponsors"> Brands &amp; sponsors</label>
+              <label class="checkbox-label"><input type="checkbox" name="audience" value="Coaches & recruiters"> Coaches &amp; recruiters</label>
+              <label class="checkbox-label"><input type="checkbox" name="audience" value="Future employers"> Future employers</label>
+              <label class="checkbox-label"><input type="checkbox" name="audience" value="Youth athletes"> Youth athletes</label>
+              <label class="checkbox-label"><input type="checkbox" name="audience" value="All of the above"> All of the above</label>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>What do you want people to feel when they land on your site?</label>
+            <textarea name="feeling" rows="3"></textarea>
+          </div>
+
+          <div class="form-section-label">04 — Your Brand</div>
+          <div class="form-group">
+            <label>How would your teammates describe you in 3 words?</label>
+            <input type="text" name="three_words" placeholder="e.g. Locked in, consistent, different">
+          </div>
+          <div class="form-group">
+            <label>Any NIL deals, merch, camps or offerings? Drop links.</label>
+            <textarea name="nil_offerings" rows="3" placeholder="Include any URLs"></textarea>
+          </div>
+
+          <div class="form-section-label">05 — Your Look</div>
+          <div class="form-group">
+            <label>What vibe feels like you?</label>
+            <div class="checkbox-group">
+              <label class="checkbox-label"><input type="radio" name="vibe" value="Dark & clean"> Dark &amp; clean</label>
+              <label class="checkbox-label"><input type="radio" name="vibe" value="Bright & bold"> Bright &amp; bold</label>
+              <label class="checkbox-label"><input type="radio" name="vibe" value="Simple & minimal"> Simple &amp; minimal</label>
+              <label class="checkbox-label"><input type="radio" name="vibe" value="Gritty & raw"> Gritty &amp; raw</label>
+              <label class="checkbox-label"><input type="radio" name="vibe" value="Just make it look expensive"> Just make it look expensive</label>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Name 2–3 athletes or brands whose online presence you respect. What do you like about them?</label>
+            <textarea name="inspiration" rows="3"></textarea>
+          </div>
+
+          <div class="form-section-label">06 — Your Website</div>
+          <div class="form-group">
+            <label>What's the main thing you want your website to do for you?</label>
+            <textarea name="website_goal" rows="3"></textarea>
+          </div>
+          <div class="form-group">
+            <label>What pages do you want?</label>
+            <div class="checkbox-group">
+              <label class="checkbox-label"><input type="checkbox" name="pages" value="About me"> About me</label>
+              <label class="checkbox-label"><input type="checkbox" name="pages" value="Stats & highlights"> Stats &amp; highlights</label>
+              <label class="checkbox-label"><input type="checkbox" name="pages" value="Photo gallery"> Photo gallery</label>
+              <label class="checkbox-label"><input type="checkbox" name="pages" value="Contact form"> Contact form</label>
+              <label class="checkbox-label"><input type="checkbox" name="pages" value="NIL & partnerships"> NIL &amp; partnerships</label>
+              <label class="checkbox-label"><input type="checkbox" name="pages" value="Store & merch"> Store &amp; merch</label>
+            </div>
+          </div>
+
+          <div class="form-section-label">07 — Your Story</div>
+          <div class="form-group">
+            <label>Tell your story. Where you grew up, how you got here, what drives you, where you're headed.</label>
+            <textarea name="story" rows="6" placeholder="This is the most important question. Take your time."></textarea>
+          </div>
+
+          <div class="form-section-label">08 — Logistics</div>
+          <div class="form-group">
+            <label>Instagram, Twitter/X, and TikTok handles</label>
+            <input type="text" name="socials" placeholder="e.g. @ashtonlogan_">
+          </div>
+          <div class="form-group">
+            <label>What's your timeline?</label>
+            <div class="checkbox-group">
+              <label class="checkbox-label"><input type="radio" name="timeline" value="ASAP"> ASAP</label>
+              <label class="checkbox-label"><input type="radio" name="timeline" value="Within 2 weeks"> Within 2 weeks</label>
+              <label class="checkbox-label"><input type="radio" name="timeline" value="Within a month"> Within a month</label>
+              <label class="checkbox-label"><input type="radio" name="timeline" value="Just exploring"> Just exploring</label>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Your email address</label>
+            <input type="email" name="email" placeholder="you@email.com" required>
+          </div>
+          <div class="form-group">
+            <label>Your phone number (optional)</label>
+            <input type="tel" name="phone" placeholder="(xxx) xxx-xxxx">
+          </div>
+
+          <button type="submit" class="btn">Send It →</button>
+          <p id="form-success">✓ Got it! We'll be in touch within 24 hours.</p>
+
+        </form>
+        <script>
+          document.getElementById('intake-form').addEventListener('submit',async function(e){
+            e.preventDefault();
+            const btn=this.querySelector('.btn');
+            btn.textContent='Sending…';btn.disabled=true;
+            const r=await fetch('https://formspree.io/f/xnjopakq',{method:'POST',body:new FormData(this),headers:{'Accept':'application/json'}});
+            if(r.ok){this.reset();document.getElementById('form-success').style.display='block';btn.style.display='none';}
+            else{btn.textContent='Send It →';btn.disabled=false;}
+          });
+        </script>
       </div>
     </div>
   </section>
