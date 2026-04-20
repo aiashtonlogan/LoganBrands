@@ -16,6 +16,7 @@
       --black:#060606;--charcoal:#0e0e0e;--surface:#141414;--border:#1f1f1f;
       --muted:#2e2e2e;--text-dim:#505050;--text-mid:#8a8a8a;--text-main:#c8c8c8;
       --text-bright:#ebebeb;--accent:#b0b0b0;--accent-light:#d4d4d4;--accent-dim:#3a3a3a;
+      --gold:#c9a84c;--gold-dim:rgba(201,168,76,0.06);--gold-border:rgba(201,168,76,0.25);
     }
     html{scroll-behavior:auto}
     body{background:var(--black);color:var(--text-main);font-family:'Cormorant Garamond',serif;overflow-x:hidden;cursor:none}
@@ -70,6 +71,29 @@
     .why-stat:hover{border-color:var(--accent);transform:translateY(-4px)}
     .why-stat-num{font-family:'Bebas Neue',sans-serif;font-size:2.8rem;color:var(--accent);line-height:1;margin-bottom:6px}
     .why-stat-label{font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:var(--text-dim)}
+
+    /* COMPARISON TABLE */
+    #comparison{background:var(--black)}
+    .comparison-inner{max-width:900px}
+    .comparison-table-wrap{margin-top:56px;border:1px solid #222;overflow:hidden;overflow-x:auto}
+    .ct-head,.ct-row{display:grid;grid-template-columns:1.4fr 1fr 1fr;min-width:500px}
+    .ct-head-cell{padding:18px 28px;font-family:'DM Mono',monospace;font-size:.58rem;letter-spacing:.28em;text-transform:uppercase;color:var(--text-dim);border-right:1px solid #222}
+    .ct-head-cell:last-child{border-right:none}
+    .ct-head-agency{text-align:center}
+    .ct-head-lb{color:var(--gold);background:var(--gold-dim);text-align:center;border-top:2px solid var(--gold)}
+    .ct-row{border-top:1px solid #222}
+    .ct-cell{padding:16px 28px;font-family:'DM Mono',monospace;font-size:.63rem;border-right:1px solid #222;display:flex;align-items:center;gap:6px;color:var(--text-mid);line-height:1.4}
+    .ct-cell:last-child{border-right:none}
+    .ct-feature{letter-spacing:.14em;text-transform:uppercase;font-size:.56rem;color:var(--text-dim)}
+    .ct-agency{justify-content:center;text-align:center}
+    .ct-lb{background:var(--gold-dim);justify-content:center;text-align:center;color:var(--text-bright);font-weight:500}
+    .ct-check{color:var(--gold)}
+    .ct-check-muted{color:var(--text-dim)}
+    .ct-cross{color:var(--muted)}
+    @media(max-width:680px){
+      .ct-cell,.ct-head-cell{padding:13px 14px;font-size:.5rem;letter-spacing:.07em}
+      .ct-feature{font-size:.49rem}
+    }
 
     /* OFFER */
     #offer{background:var(--black)}
@@ -295,6 +319,58 @@
             <div class="why-stat-num">24H</div>
             <div class="why-stat-label">Response Time</div>
           </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- COMPARISON TABLE -->
+  <section id="comparison">
+    <div class="comparison-inner">
+      <div class="reveal">
+        <p class="section-label">The Difference</p>
+        <h2 class="section-heading">NOT AN<br><em>agency.</em><br>THE PROOF.</h2>
+      </div>
+      <div class="comparison-table-wrap">
+        <div class="ct-head">
+          <div class="ct-head-cell"></div>
+          <div class="ct-head-cell ct-head-agency">Typical Agency</div>
+          <div class="ct-head-cell ct-head-lb">Logan Brands</div>
+        </div>
+        <div class="ct-row">
+          <div class="ct-cell ct-feature">Cost</div>
+          <div class="ct-cell ct-agency">$5K–$15K+</div>
+          <div class="ct-cell ct-lb">Fraction of that</div>
+        </div>
+        <div class="ct-row">
+          <div class="ct-cell ct-feature">Knows athletes</div>
+          <div class="ct-cell ct-agency"><span class="ct-cross">✗</span> No</div>
+          <div class="ct-cell ct-lb"><span class="ct-check">✓</span> D1 Athlete</div>
+        </div>
+        <div class="ct-row">
+          <div class="ct-cell ct-feature">Builds the site</div>
+          <div class="ct-cell ct-agency"><span class="ct-check-muted">✓</span> Yes</div>
+          <div class="ct-cell ct-lb"><span class="ct-check">✓</span> Yes</div>
+        </div>
+        <div class="ct-row">
+          <div class="ct-cell ct-feature">Brand strategy</div>
+          <div class="ct-cell ct-agency"><span class="ct-check-muted">✓</span> Yes</div>
+          <div class="ct-cell ct-lb"><span class="ct-check">✓</span> Yes</div>
+        </div>
+        <div class="ct-row">
+          <div class="ct-cell ct-feature">NIL knowledge</div>
+          <div class="ct-cell ct-agency"><span class="ct-cross">✗</span> No</div>
+          <div class="ct-cell ct-lb"><span class="ct-check">✓</span> Active in NIL</div>
+        </div>
+        <div class="ct-row">
+          <div class="ct-cell ct-feature">Speed</div>
+          <div class="ct-cell ct-agency">Weeks / months</div>
+          <div class="ct-cell ct-lb"><span class="ct-check">✓</span> Fast turnaround</div>
+        </div>
+        <div class="ct-row">
+          <div class="ct-cell ct-feature">Built by an athlete</div>
+          <div class="ct-cell ct-agency"><span class="ct-cross">✗</span> No</div>
+          <div class="ct-cell ct-lb"><span class="ct-check">✓</span> Always</div>
         </div>
       </div>
     </div>
@@ -714,6 +790,17 @@
     ScrollTrigger.create({
       trigger:'.proof-tags',start:'top 88%',
       onEnter:()=>gsap.to('.proof-tag',{opacity:1,y:0,scale:1,duration:.45,stagger:.07,ease:'back.out(1.5)'})
+    });
+
+    // Comparison table rows
+    gsap.set('.comparison-table-wrap',{opacity:0,y:28});
+    gsap.set('.ct-row',{opacity:0,y:14});
+    ScrollTrigger.create({
+      trigger:'.comparison-table-wrap',start:'top 82%',
+      onEnter:()=>{
+        gsap.to('.comparison-table-wrap',{opacity:1,y:0,duration:.6,ease:'power2.out'});
+        gsap.to('.ct-row',{opacity:1,y:0,duration:.42,stagger:.07,ease:'power2.out',delay:.22});
+      }
     });
 
     // Contact cols + footer
