@@ -158,7 +158,7 @@
     .mobile-menu ul { list-style:none; text-align:center; display:flex; flex-direction:column; gap:2rem; }
     .mobile-menu ul a { font-family:'Bebas Neue',sans-serif; font-size:clamp(2.5rem,10vw,4rem); text-transform:uppercase; letter-spacing:2px; color:var(--text-bright); text-decoration:none; transition:color .2s; }
     .mobile-menu ul a:hover { color:var(--accent); }
-    @media(max-width:960px) { .nav-hamburger { display:flex; } .nav-links { display:none; } }
+    @media(max-width:960px) { .nav-hamburger { display:flex; grid-column:3; } .nav-links { display:none; } }
 
     /* Word reveal */
     .word-wrap{display:inline-block;overflow:hidden;vertical-align:bottom}
@@ -215,9 +215,11 @@
     }
     @media(max-width:767px){
       #hero-ripple{display:none}
-      .nav-hamburger{grid-column:3}
       .hero-monogram{margin-bottom:52px}
       .hero-eyebrow{margin-bottom:28px}
+      .ct-head,.ct-row{min-width:0;grid-template-columns:1fr 0.9fr 0.9fr}
+      .ct-head-cell,.ct-cell{padding:10px 6px;font-size:.46rem;letter-spacing:.04em}
+      .ct-feature{font-size:.44rem;letter-spacing:.06em}
     }
   </style>
 </head>
