@@ -212,6 +212,9 @@
       .process-steps{grid-template-columns:1fr 1fr}
       footer{padding:32px 28px;flex-direction:column;gap:16px;text-align:center}
     }
+
+    /* WebGL hero canvas */
+    #hero-webgl{position:absolute;inset:0;width:100%;height:100%;z-index:0;display:block;pointer-events:none}
   </style>
 </head>
 <body>
@@ -865,6 +868,163 @@
       const half=marqueeTrack.scrollWidth/2;
       gsap.to(marqueeTrack,{x:-half,duration:28,ease:'none',repeat:-1});
     }
+  </script>
+
+  <!-- ── Hero WebGL ripple simulation ──────────────────────────────────── -->
+  <script>
+  (function(){
+    if(window.innerWidth<768)return;
+
+    const hero=document.getElementById('hero');
+    const canvas=document.createElement('canvas');
+    canvas.id='hero-webgl';
+    hero.insertBefore(canvas,hero.firstChild);
+
+    const gl=canvas.getContext('webgl',{antialias:false,alpha:false,depth:false,stencil:false})
+             ||canvas.getContext('experimental-webgl',{antialias:false,alpha:false});
+    if(!gl){canvas.remove();return;}
+
+    /* ── Shaders ── */
+    const VS=`attribute vec2 a;varying vec2 v;void main(){v=a*.5+.5;gl_Position=vec4(a,0.,1.);}`;
+
+    const FS=`precision mediump float;
+uniform vec2 u_res;
+uniform vec2 u_rp[16];
+uniform float u_rt[16];
+uniform float u_rs[16];
+varying vec2 v;
+void main(){
+  float ar=u_res.x/u_res.y;
+  float qx=v.x*ar, qy=v.y;
+  vec2 grad=vec2(0.);
+  for(int i=0;i<16;i++){
+    float s=u_rs[i];
+    if(s>=.001){
+      float dx=qx-u_rp[i].x*ar;
+      float dy=qy-u_rp[i].y;
+      float d=sqrt(dx*dx+dy*dy)+.0001;
+      float age=u_rt[i];
+      float r=age*.48;
+      float dr=d-r;
+      float ring=exp(-55.*dr*dr);
+      float dec=exp(-age*1.9);
+      float g=-110.*dr*ring*dec*s;
+      grad+=vec2(g*dx/d,g*dy/d);
+    }
+  }
+  vec3 n=normalize(vec3(-grad.x*2.2,-grad.y*2.2,1.));
+  vec3 L=normalize(vec3(.3,.45,1.));
+  float spec=pow(max(dot(n,L),0.),18.);
+  float diff=max(dot(n,L),0.);
+  vec3 base=vec3(.024,.024,.024);
+  vec3 warm=vec3(.87,.84,.80);
+  gl_FragColor=vec4(base+warm*(spec*.10+diff*.013),1.);
+}`;
+
+    /* ── Compile & link ── */
+    function mksh(t,src){
+      const s=gl.createShader(t);
+      gl.shaderSource(s,src);gl.compileShader(s);
+      if(!gl.getShaderParameter(s,gl.COMPILE_STATUS)){console.warn('GLSL:',gl.getShaderInfoLog(s));return null;}
+      return s;
+    }
+    const prog=gl.createProgram();
+    const vsh=mksh(gl.VERTEX_SHADER,VS), fsh=mksh(gl.FRAGMENT_SHADER,FS);
+    if(!vsh||!fsh){canvas.remove();return;}
+    gl.attachShader(prog,vsh);gl.attachShader(prog,fsh);gl.linkProgram(prog);
+    if(!gl.getProgramParameter(prog,gl.LINK_STATUS)){canvas.remove();return;}
+    gl.useProgram(prog);
+
+    /* ── Fullscreen quad ── */
+    const buf=gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER,buf);
+    gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,1,1]),gl.STATIC_DRAW);
+    const aLoc=gl.getAttribLocation(prog,'a');
+    gl.enableVertexAttribArray(aLoc);
+    gl.vertexAttribPointer(aLoc,2,gl.FLOAT,false,0,0);
+
+    /* ── Uniform locations ── */
+    const uRes=gl.getUniformLocation(prog,'u_res');
+    const uRp =gl.getUniformLocation(prog,'u_rp');
+    const uRt =gl.getUniformLocation(prog,'u_rt');
+    const uRs =gl.getUniformLocation(prog,'u_rs');
+
+    /* ── Ripple pool (ring buffer, 16 slots) ── */
+    const N=16;
+    const rpData=new Float32Array(N*2);
+    const rtData=new Float32Array(N);
+    const rsData=new Float32Array(N);
+    const rip=Array.from({length:N},()=>({x:0,y:0,age:10,s:0}));
+    let head=0;
+
+    function addRipple(nx,ny,str){
+      const r=rip[head%N];r.x=nx;r.y=ny;r.age=0;r.s=str;head++;
+    }
+
+    /* ── Input ── */
+    let lx=-1,ly=-1,lastAddT=0;
+
+    function toNorm(e){
+      const rc=hero.getBoundingClientRect();
+      return[(e.clientX-rc.left)/rc.width, 1-(e.clientY-rc.top)/rc.height];
+    }
+
+    hero.addEventListener('mousemove',e=>{
+      const[nx,ny]=toNorm(e);
+      if(lx>=0){
+        const dx=nx-lx,dy=ny-ly;
+        const vel=Math.sqrt(dx*dx+dy*dy);
+        const now=performance.now();
+        if(vel>.003&&(now-lastAddT)>90){
+          addRipple(nx,ny,Math.min(vel*9,.55));
+          lastAddT=now;
+        }
+      }
+      lx=nx;ly=ny;
+    });
+
+    hero.addEventListener('mouseleave',()=>{lx=-1;ly=-1;});
+
+    hero.addEventListener('click',e=>{
+      const[nx,ny]=toNorm(e);
+      addRipple(nx,ny,1.8);
+    });
+
+    /* ── Resize ── */
+    function resize(){
+      if(window.innerWidth<768){canvas.style.display='none';return;}
+      canvas.style.display='block';
+      const rc=hero.getBoundingClientRect();
+      canvas.width=Math.floor(rc.width);
+      canvas.height=Math.floor(rc.height);
+    }
+    resize();
+    window.addEventListener('resize',resize);
+
+    /* ── Render loop ── */
+    let prev=0;
+    function frame(ts){
+      requestAnimationFrame(frame);
+      if(window.innerWidth<768)return;
+      const dt=Math.min((ts-prev)*.001,.05);
+      prev=ts;
+
+      for(const r of rip){if(r.s>.0005)r.age+=dt;if(r.age>5)r.s=0;}
+
+      for(let i=0;i<N;i++){
+        rpData[i*2]=rip[i].x;rpData[i*2+1]=rip[i].y;
+        rtData[i]=rip[i].age;rsData[i]=rip[i].s;
+      }
+
+      gl.viewport(0,0,canvas.width,canvas.height);
+      gl.uniform2f(uRes,canvas.width,canvas.height);
+      gl.uniform2fv(uRp,rpData);
+      gl.uniform1fv(uRt,rtData);
+      gl.uniform1fv(uRs,rsData);
+      gl.drawArrays(gl.TRIANGLE_STRIP,0,4);
+    }
+    requestAnimationFrame(frame);
+  })();
   </script>
 </body>
 </html>
