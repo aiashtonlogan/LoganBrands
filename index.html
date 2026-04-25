@@ -731,10 +731,9 @@
       .to('.hero-sub',{opacity:1,y:0,duration:.8,ease:'power2.out'},'-=.3')
       .to('.hero-cta',{opacity:1,y:0,duration:.8,ease:'power2.out'},'-=.5');
 
-    // ── Hero parallax ─────────────────────────────────
+    // ── Hero parallax (decorative elements only — text never moves) ──
     const heroST={trigger:'#hero',start:'top top',end:'bottom top',scrub:true};
     gsap.to('.hero-grain',{y:'-25%',ease:'none',scrollTrigger:heroST});
-    gsap.to('.hero-monogram',{y:'-55px',ease:'none',scrollTrigger:heroST});
     gsap.to('.hero-line-left,.hero-line-right',{y:'-35px',ease:'none',scrollTrigger:heroST});
 
     // ── Letter-by-letter for section headings ─────────
@@ -847,9 +846,10 @@
       });
     });
 
-    // ── Magnetic buttons ──────────────────────────────
+    // ── Magnetic buttons (skip hero CTAs — hero text must never move) ──
     if(isFine){
       document.querySelectorAll('.btn-primary,.btn-ghost').forEach(btn=>{
+        if(btn.closest('#hero'))return;
         btn.addEventListener('mousemove',e=>{
           const r=btn.getBoundingClientRect();
           const dx=(e.clientX-(r.left+r.width/2))*.28;
