@@ -33,8 +33,16 @@
 
     /* HERO */
     #hero{position:relative;min-height:100vh;background:#080808;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:140px 60px 100px;overflow:hidden}
-    .hero-gem-wrap{position:relative;width:300px;height:300px;margin:28px auto;z-index:1;flex-shrink:0}
-    #hero-gem{display:block;width:100%;height:100%}
+    #hero-ripple{position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
+    .hero-grain{position:absolute;inset:0;z-index:1;pointer-events:none;opacity:.03;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");background-size:300px}
+    .hero-line-left,.hero-line-right{position:absolute;top:0;bottom:0;width:1px;background:var(--border);z-index:2;pointer-events:none}
+    .hero-line-left{left:60px}
+    .hero-line-right{right:60px}
+    .hero-side-text{position:absolute;top:50%;left:50%;transform:translateX(-50%) translateY(-50%) rotate(-90deg);font-family:'DM Mono',monospace;font-size:.48rem;letter-spacing:.3em;text-transform:uppercase;color:var(--text-dim);white-space:nowrap}
+    .hero-monogram{position:relative;z-index:2;margin-bottom:28px;flex-shrink:0}
+    .lb-mark{font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:300;font-size:clamp(72px,11vw,160px);line-height:1;color:var(--text-bright);letter-spacing:-.03em;display:inline-block;position:relative}
+    .lb-mark::after{content:'';position:absolute;bottom:-12px;left:50%;transform:translateX(-50%);width:80%;height:1px;background:var(--border)}
+    .lb-wordmark{font-family:'DM Mono',monospace;font-size:.55rem;letter-spacing:.4em;text-transform:uppercase;color:var(--text-dim);margin-top:28px}
 
     .hero-eyebrow{font-family:'DM Mono',monospace;font-size:.65rem;letter-spacing:.3em;text-transform:uppercase;color:var(--accent);margin-bottom:0;opacity:0;animation:fadeUp .8s ease .2s forwards;position:relative;z-index:2}
     .hero-heading{font-family:'Bebas Neue',sans-serif;font-size:clamp(64px,9vw,136px);line-height:.9;color:var(--text-bright);letter-spacing:.02em;opacity:0;animation:fadeUp .9s ease .4s forwards;position:relative;z-index:2}
@@ -199,13 +207,13 @@
       nav{padding:24px 28px}
       section,#contact{padding:80px 28px}
       #hero{padding:120px 28px 80px}
-.why-grid{grid-template-columns:1fr;gap:48px}
+      .why-grid{grid-template-columns:1fr;gap:48px}
       .offer-grid{grid-template-columns:1fr}
       .process-steps{grid-template-columns:1fr 1fr}
       footer{padding:32px 28px;flex-direction:column;gap:16px;text-align:center}
+      .hero-line-left,.hero-line-right{display:none}
     }
-
-    /* Gemstone canvas — sized via .hero-gem-wrap */
+    @media(max-width:767px){#hero-ripple{display:none}}
   </style>
 </head>
 <body>
@@ -241,10 +249,15 @@
 
   <!-- HERO -->
   <section id="hero">
-    <p class="hero-eyebrow">Personal Brand Development · Athletes &amp; Beyond</p>
-    <div class="hero-gem-wrap">
-      <canvas id="hero-gem"></canvas>
+    <canvas id="hero-ripple"></canvas>
+    <div class="hero-grain"></div>
+    <div class="hero-line-left"><span class="hero-side-text">EST. 2026</span></div>
+    <div class="hero-line-right"></div>
+    <div class="hero-monogram">
+      <div class="lb-mark">LB</div>
+      <div class="lb-wordmark">Logan Brands</div>
     </div>
+    <p class="hero-eyebrow">Personal Brand Development · Athletes &amp; Beyond</p>
     <h1 class="hero-heading">Build Your<br><em>Brand.</em></h1>
     <p class="hero-sub">You put in the work every day. Your personal brand should reflect that — and open doors beyond the field. We build the presence that attracts NIL deals, recruiters, and real opportunities.</p>
     <div class="hero-cta">
@@ -256,22 +269,22 @@
   <!-- MARQUEE STRIP -->
   <div class="marquee-strip" aria-hidden="true">
     <div class="marquee-track">
-      <span class="marquee-item">Personal Brand Website</span><span class="marquee-sep">·</span>
-      <span class="marquee-item">NIL Strategy &amp; Positioning</span><span class="marquee-sep">·</span>
-      <span class="marquee-item">Social Media Identity</span><span class="marquee-sep">·</span>
-      <span class="marquee-item">Brand Identity</span><span class="marquee-sep">·</span>
-      <span class="marquee-item">Athlete-First</span><span class="marquee-sep">·</span>
-      <span class="marquee-item">D1 Founded</span><span class="marquee-sep">·</span>
-      <span class="marquee-item">MBA Backed</span><span class="marquee-sep">·</span>
-      <span class="marquee-item">Full Brand Package</span><span class="marquee-sep">·</span>
-      <span class="marquee-item">Personal Brand Website</span><span class="marquee-sep">·</span>
-      <span class="marquee-item">NIL Strategy &amp; Positioning</span><span class="marquee-sep">·</span>
-      <span class="marquee-item">Social Media Identity</span><span class="marquee-sep">·</span>
-      <span class="marquee-item">Brand Identity</span><span class="marquee-sep">·</span>
-      <span class="marquee-item">Athlete-First</span><span class="marquee-sep">·</span>
-      <span class="marquee-item">D1 Founded</span><span class="marquee-sep">·</span>
-      <span class="marquee-item">MBA Backed</span><span class="marquee-sep">·</span>
-      <span class="marquee-item">Full Brand Package</span><span class="marquee-sep">·</span>
+      <span class="marquee-item">Personal Brand Website</span><span class="marquee-sep">&middot;</span>
+      <span class="marquee-item">NIL Strategy &amp; Positioning</span><span class="marquee-sep">&middot;</span>
+      <span class="marquee-item">Social Media Identity</span><span class="marquee-sep">&middot;</span>
+      <span class="marquee-item">Brand Identity</span><span class="marquee-sep">&middot;</span>
+      <span class="marquee-item">Athlete-First</span><span class="marquee-sep">&middot;</span>
+      <span class="marquee-item">D1 Founded</span><span class="marquee-sep">&middot;</span>
+      <span class="marquee-item">MBA Backed</span><span class="marquee-sep">&middot;</span>
+      <span class="marquee-item">Full Brand Package</span><span class="marquee-sep">&middot;</span>
+      <span class="marquee-item">Personal Brand Website</span><span class="marquee-sep">&middot;</span>
+      <span class="marquee-item">NIL Strategy &amp; Positioning</span><span class="marquee-sep">&middot;</span>
+      <span class="marquee-item">Social Media Identity</span><span class="marquee-sep">&middot;</span>
+      <span class="marquee-item">Brand Identity</span><span class="marquee-sep">&middot;</span>
+      <span class="marquee-item">Athlete-First</span><span class="marquee-sep">&middot;</span>
+      <span class="marquee-item">D1 Founded</span><span class="marquee-sep">&middot;</span>
+      <span class="marquee-item">MBA Backed</span><span class="marquee-sep">&middot;</span>
+      <span class="marquee-item">Full Brand Package</span><span class="marquee-sep">&middot;</span>
     </div>
   </div>
 
@@ -316,7 +329,7 @@
     <div class="comparison-inner">
       <div class="reveal">
         <p class="section-label">The Difference</p>
-        <h2 class="section-heading">NOT AN<br><em>agency.</em><br>THE PROOF.</h2>
+        <h2 class="section-heading">The<br><em>Difference.</em></h2>
       </div>
       <div class="comparison-table-wrap">
         <div class="ct-head">
@@ -855,124 +868,93 @@
     }
   </script>
 
-  <!-- ── Hero 3D Gemstone ──────────────────────────────────────────────── -->
+  <!-- ── Hero fluid ripple ────────────────────────────────────────────── -->
   <script>
   (function(){
-    const canvas=document.getElementById('hero-gem');
-    if(!canvas)return;
-    const dpr=Math.min(window.devicePixelRatio||1,2);
-    canvas.width=300*dpr; canvas.height=300*dpr;
-
-    const gl=canvas.getContext('webgl',{antialias:true,alpha:true,premultipliedAlpha:false})
-            ||canvas.getContext('experimental-webgl',{antialias:true,alpha:true,premultipliedAlpha:false});
-    if(!gl)return;
-    gl.clearColor(0,0,0,0);
-    gl.enable(gl.DEPTH_TEST);
-
-    const GEM_VS=`attribute vec3 aPos;attribute vec3 aNorm;uniform mat4 uMVP;uniform mat3 uNM;varying vec3 vN;void main(){gl_Position=uMVP*vec4(aPos,1.0);vN=uNM*aNorm;}`;
-    const GEM_FS=`precision mediump float;varying vec3 vN;uniform vec3 uL1;uniform vec3 uL2;void main(){vec3 n=normalize(gl_FrontFacing?vN:-vN);vec3 e=vec3(0.0,0.0,1.0);float d1=max(dot(n,uL1),0.0);float d2=max(dot(n,uL2),0.0);float s1=pow(max(dot(normalize(uL1+e),n),0.0),48.0);float s2=pow(max(dot(normalize(uL2+e),n),0.0),96.0);vec3 col=vec3(0.04,0.04,0.045)+vec3(0.92,0.90,0.86)*(d1*0.18+d2*0.06+s1*0.55+s2*0.70);gl_FragColor=vec4(col,1.0);}`;
-    const SPK_VS=`attribute vec3 aPos;attribute float aPhase;uniform mat4 uMVP;uniform float uT;varying float vA;void main(){gl_Position=uMVP*vec4(aPos,1.0);float p=0.5+0.5*sin(uT*2.5+aPhase);vA=p*p*0.65;gl_PointSize=2.0+2.5*p;}`;
-    const SPK_FS=`precision mediump float;varying float vA;void main(){float d=distance(gl_PointCoord,vec2(0.5));if(d>0.5)discard;gl_FragColor=vec4(0.95,0.92,0.88,(1.0-d*2.0)*vA);}`;
-
-    function mksh(t,src){const s=gl.createShader(t);gl.shaderSource(s,src);gl.compileShader(s);return gl.getShaderParameter(s,gl.COMPILE_STATUS)?s:null;}
-    function mkprog(vs,fs){const p=gl.createProgram(),v=mksh(gl.VERTEX_SHADER,vs),f=mksh(gl.FRAGMENT_SHADER,fs);if(!v||!f)return null;gl.attachShader(p,v);gl.attachShader(p,f);gl.linkProgram(p);return gl.getProgramParameter(p,gl.LINK_STATUS)?p:null;}
-    const gP=mkprog(GEM_VS,GEM_FS),sP=mkprog(SPK_VS,SPK_FS);
-    if(!gP||!sP)return;
-
-    /* ── Geometry ── */
-    const N=8,gPos=[],gNrm=[],spPos=[],spPh=[];
-    const TC=[0,.65,0],CU=[0,-.90,0];
-    const TR=[],CR=[],GU=[],GL=[],PB=[];
-    for(let i=0;i<N;i++){
-      const a=i/N*Math.PI*2,ao=(i+.5)/N*Math.PI*2;
-      TR.push([Math.cos(a)*.28,.55,Math.sin(a)*.28]);
-      CR.push([Math.cos(ao)*.46,.20,Math.sin(ao)*.46]);
-      GU.push([Math.cos(a)*.50,.02,Math.sin(a)*.50]);
-      GL.push([Math.cos(ao)*.50,-.10,Math.sin(ao)*.50]);
-      PB.push([Math.cos(a)*.22,-.35,Math.sin(a)*.22]);
-    }
-    [...TR,...GU,...GL].forEach(v=>{spPos.push(...v);spPh.push(Math.random()*Math.PI*2);});
-
-    function tri(a,b,c){
-      const ab=[b[0]-a[0],b[1]-a[1],b[2]-a[2]],ac=[c[0]-a[0],c[1]-a[1],c[2]-a[2]];
-      let nx=ab[1]*ac[2]-ab[2]*ac[1],ny=ab[2]*ac[0]-ab[0]*ac[2],nz=ab[0]*ac[1]-ab[1]*ac[0];
-      const l=Math.sqrt(nx*nx+ny*ny+nz*nz)||1;nx/=l;ny/=l;nz/=l;
-      gPos.push(...a,...b,...c);gNrm.push(nx,ny,nz,nx,ny,nz,nx,ny,nz);
-    }
-    for(let i=0;i<N;i++){
-      const j=(i+1)%N,k=(i-1+N)%N;
-      tri(TC,TR[i],TR[j]);                          // table fan
-      tri(TR[i],CR[k],CR[i]);tri(TR[i],TR[j],CR[i]); // crown upper
-      tri(CR[i],GU[j],GU[i]);tri(CR[i],GL[i],GU[j]); // crown lower
-      tri(GU[i],GU[j],GL[i]);tri(GL[i],GU[j],GL[j]); // girdle
-      tri(GL[i],PB[i],GL[j]);tri(GL[j],PB[i],PB[j]); // pavilion upper
-      tri(PB[i],CU,PB[j]);                           // pavilion lower
-    }
-
-    function mkbuf(d){const b=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,b);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(d),gl.STATIC_DRAW);return b;}
-    const gPB=mkbuf(gPos),gNB=mkbuf(gNrm),sPB=mkbuf(spPos),sPhB=mkbuf(spPh);
-    const gV=gPos.length/3,sV=spPos.length/3;
-
-    /* ── Matrix utils (column-major) ── */
-    function m4mul(a,b){const o=new Float32Array(16);for(let r=0;r<4;r++)for(let c=0;c<4;c++){let s=0;for(let k=0;k<4;k++)s+=a[k*4+r]*b[c*4+k];o[c*4+r]=s;}return o;}
-    function m4ry(a){const c=Math.cos(a),s=Math.sin(a);return new Float32Array([c,0,-s,0,0,1,0,0,s,0,c,0,0,0,0,1]);}
-    function m4rx(a){const c=Math.cos(a),s=Math.sin(a);return new Float32Array([1,0,0,0,0,c,s,0,0,-s,c,0,0,0,0,1]);}
-    function m4t(x,y,z){return new Float32Array([1,0,0,0,0,1,0,0,0,0,1,0,x,y,z,1]);}
-    function m4p(fov,n,f){const t=1/Math.tan(fov/2);return new Float32Array([t,0,0,0,0,t,0,0,0,0,(f+n)/(n-f),-1,0,0,2*f*n/(n-f),0]);}
-    function m3(m){return new Float32Array([m[0],m[1],m[2],m[4],m[5],m[6],m[8],m[9],m[10]]);}
-
-    /* ── Uniforms / attribs ── */
-    gl.useProgram(gP);
-    const gMVP=gl.getUniformLocation(gP,'uMVP'),gNM=gl.getUniformLocation(gP,'uNM');
-    const gL1=gl.getUniformLocation(gP,'uL1'),gL2=gl.getUniformLocation(gP,'uL2');
-    const gaPos=gl.getAttribLocation(gP,'aPos'),gaNrm=gl.getAttribLocation(gP,'aNorm');
-    function nrm(v){const l=Math.hypot(...v);return v.map(x=>x/l);}
-    const l1=nrm([.5,.8,1]),l2=nrm([-.7,.1,.5]);
-    gl.uniform3f(gL1,l1[0],l1[1],l1[2]);gl.uniform3f(gL2,l2[0],l2[1],l2[2]);
-
-    gl.useProgram(sP);
-    const sMVP=gl.getUniformLocation(sP,'uMVP'),sT=gl.getUniformLocation(sP,'uT');
-    const saPos=gl.getAttribLocation(sP,'aPos'),saPh=gl.getAttribLocation(sP,'aPhase');
-
-    const proj=m4p(0.66,.1,10),view=m4t(0,0,-2.8);
-    let rotY=0,rotX=.18,mvy=0,mvx=0,prev=0;
-
+    if(window.innerWidth<768)return;
+    const canvas=document.getElementById('hero-ripple');
     const hero=document.getElementById('hero');
+    if(!canvas||!hero)return;
+
+    const ctx=canvas.getContext('2d');
+    const SCALE=3;
+    let W,H,sw,sh,cur,prv,tmp,img,ofs,oCtx,active=false,idleFrames=0,resizeTimer;
+
+    function init(){
+      W=hero.offsetWidth;H=hero.offsetHeight;
+      canvas.width=W;canvas.height=H;
+      sw=Math.ceil(W/SCALE);sh=Math.ceil(H/SCALE);
+      cur=new Float32Array(sw*sh);
+      prv=new Float32Array(sw*sh);
+      ofs=document.createElement('canvas');
+      ofs.width=sw;ofs.height=sh;
+      oCtx=ofs.getContext('2d');
+      img=oCtx.createImageData(sw,sh);
+      for(let i=0;i<sw*sh;i++){img.data[i*4]=8;img.data[i*4+1]=8;img.data[i*4+2]=8;img.data[i*4+3]=255;}
+    }
+
+    function disturb(px,py,str){
+      active=true;idleFrames=0;
+      const x=Math.round(px/SCALE)|0;
+      const y=Math.round(py/SCALE)|0;
+      const r=str>100?10:4;
+      for(let dy=-r;dy<=r;dy++){
+        for(let dx=-r;dx<=r;dx++){
+          const nx=x+dx,ny=y+dy;
+          if(nx>0&&nx<sw-1&&ny>0&&ny<sh-1){
+            const d=Math.sqrt(dx*dx+dy*dy);
+            if(d<=r)cur[ny*sw+nx]+=str*(1-d/r);
+          }
+        }
+      }
+    }
+
+    function step(){
+      if(!active)return;
+      let maxV=0;
+      for(let y=1;y<sh-1;y++){
+        for(let x=1;x<sw-1;x++){
+          const i=y*sw+x;
+          const n=(cur[i-1]+cur[i+1]+cur[i-sw]+cur[i+sw])/2-prv[i];
+          prv[i]=n*0.985;
+          const av=Math.abs(n);if(av>maxV)maxV=av;
+        }
+      }
+      tmp=cur;cur=prv;prv=tmp;
+      if(maxV<0.05){idleFrames++;if(idleFrames>30)active=false;}
+      else idleFrames=0;
+    }
+
+    function render(){
+      for(let y=0;y<sh;y++){
+        for(let x=0;x<sw;x++){
+          const i=y*sw+x;
+          const s=Math.min(Math.abs(cur[i])*1.8,32);
+          const p=i*4;
+          img.data[p]=8+s;
+          img.data[p+1]=8+s*0.93;
+          img.data[p+2]=8+s*0.86;
+        }
+      }
+      oCtx.putImageData(img,0,0);
+      ctx.imageSmoothingEnabled=true;
+      ctx.imageSmoothingQuality='medium';
+      ctx.drawImage(ofs,0,0,W,H);
+    }
+
+    init();
+    window.addEventListener('resize',()=>{clearTimeout(resizeTimer);resizeTimer=setTimeout(init,200);});
+
     hero.addEventListener('mousemove',e=>{
       const rc=hero.getBoundingClientRect();
-      mvy+=((e.clientX-rc.left)/rc.width-.5)*0.025;
-      mvx+=((e.clientY-rc.top)/rc.height-.5)*0.015;
+      disturb(e.clientX-rc.left,e.clientY-rc.top,70);
+    });
+    hero.addEventListener('click',e=>{
+      const rc=hero.getBoundingClientRect();
+      disturb(e.clientX-rc.left,e.clientY-rc.top,220);
     });
 
-    function frame(ts){
-      requestAnimationFrame(frame);
-      const dt=Math.min((ts-prev)*.001,.05);prev=ts;
-      mvy*=.93;mvx*=.93;
-      rotY+=(0.30+mvy)*dt;
-      rotX=Math.max(-.4,Math.min(.5,rotX+mvx*dt));
-
-      const mod=m4mul(m4ry(rotY),m4rx(rotX));
-      const mvp=m4mul(proj,m4mul(view,mod));
-      const nm=m3(mod);
-
-      gl.viewport(0,0,canvas.width,canvas.height);
-      gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);
-
-      gl.useProgram(gP);
-      gl.uniformMatrix4fv(gMVP,false,mvp);gl.uniformMatrix3fv(gNM,false,nm);
-      gl.bindBuffer(gl.ARRAY_BUFFER,gPB);gl.enableVertexAttribArray(gaPos);gl.vertexAttribPointer(gaPos,3,gl.FLOAT,false,0,0);
-      gl.bindBuffer(gl.ARRAY_BUFFER,gNB);gl.enableVertexAttribArray(gaNrm);gl.vertexAttribPointer(gaNrm,3,gl.FLOAT,false,0,0);
-      gl.drawArrays(gl.TRIANGLES,0,gV);
-
-      gl.enable(gl.BLEND);gl.blendFunc(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);
-      gl.useProgram(sP);
-      gl.uniformMatrix4fv(sMVP,false,mvp);gl.uniform1f(sT,ts*.001);
-      gl.bindBuffer(gl.ARRAY_BUFFER,sPB);gl.enableVertexAttribArray(saPos);gl.vertexAttribPointer(saPos,3,gl.FLOAT,false,0,0);
-      gl.bindBuffer(gl.ARRAY_BUFFER,sPhB);gl.enableVertexAttribArray(saPh);gl.vertexAttribPointer(saPh,1,gl.FLOAT,false,0,0);
-      gl.drawArrays(gl.POINTS,0,sV);
-      gl.disable(gl.BLEND);
-    }
-    requestAnimationFrame(frame);
+    (function loop(){requestAnimationFrame(loop);step();render();})();
   })();
   </script>
 </body>
