@@ -10,7 +10,6 @@
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.163.0/build/three.min.js"></script>
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
     :root{
@@ -877,100 +876,96 @@
   </script>
 
   <!-- ── Hero Three.js scene ──────────────────────────────────────────── -->
-  <script>
-  (function(){
-    if(window.innerWidth<768||typeof THREE==='undefined')return;
-    const canvas=document.getElementById('hero-ripple');
-    const hero=document.getElementById('hero');
-    if(!canvas||!hero)return;
+  <script type="module">
+  import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.163.0/build/three.module.js';
 
-    // Renderer
-    const renderer=new THREE.WebGLRenderer({canvas,antialias:true});
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
-    renderer.setSize(window.innerWidth,window.innerHeight,false);
-    renderer.setClearColor(0x080808,1);
+  if(window.innerWidth<768)throw 0;
+  const canvas=document.getElementById('hero-ripple');
+  const hero=document.getElementById('hero');
+  if(!canvas||!hero)throw 0;
 
-    // Scene + camera (CLAUDE.md spec)
-    const scene=new THREE.Scene();
-    const camera=new THREE.PerspectiveCamera(70,window.innerWidth/window.innerHeight,0.1,100);
-    camera.position.set(0,0,3);
+  // Renderer
+  const renderer=new THREE.WebGLRenderer({canvas,antialias:true});
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+  renderer.setSize(window.innerWidth,window.innerHeight,false);
+  renderer.setClearColor(0x080808,1);
 
-    // Group lets mouse parallax rotate everything together
-    const group=new THREE.Group();
-    scene.add(group);
+  // Scene + camera (CLAUDE.md spec)
+  const scene=new THREE.Scene();
+  const camera=new THREE.PerspectiveCamera(70,window.innerWidth/window.innerHeight,0.1,100);
+  camera.position.set(0,0,3);
 
-    // Lighting rig (CLAUDE.md standard + cinematic rim)
-    const ambientLight=new THREE.AmbientLight(0xffffff,0.3);
-    const directionalLight=new THREE.DirectionalLight(0xffffff,1.2);
-    directionalLight.position.set(2,3,1);
-    const pointLight=new THREE.PointLight(0xff6600,0.8,10);
-    pointLight.position.set(-2,1,2);
-    const rimLight=new THREE.PointLight(0xff4400,2.0,5);
-    rimLight.position.set(0.8,0.6,1.8);
-    scene.add(ambientLight,directionalLight,pointLight,rimLight);
+  // Group lets mouse parallax rotate everything together
+  const group=new THREE.Group();
+  scene.add(group);
 
-    // Low-poly icosahedron — center-right of frame
-    const icoGeo=new THREE.IcosahedronGeometry(0.72,1);
-    const icoMat=new THREE.MeshStandardMaterial({
-      color:0x1a0c04,
-      metalness:0.88,
-      roughness:0.18,
-      emissive:0x3d1400,
-      emissiveIntensity:0.55
-    });
-    const ico=new THREE.Mesh(icoGeo,icoMat);
-    ico.position.set(1.05,0,0);
-    group.add(ico);
+  // Lighting rig (CLAUDE.md standard + cinematic rim)
+  const ambientLight=new THREE.AmbientLight(0xffffff,0.3);
+  const directionalLight=new THREE.DirectionalLight(0xffffff,1.2);
+  directionalLight.position.set(2,3,1);
+  const pointLight=new THREE.PointLight(0xff6600,0.8,10);
+  pointLight.position.set(-2,1,2);
+  const rimLight=new THREE.PointLight(0xff4400,2.0,5);
+  rimLight.position.set(0.8,0.6,1.8);
+  scene.add(ambientLight,directionalLight,pointLight,rimLight);
 
-    // Particle field orbiting the object
-    const COUNT=280;
-    const pPos=new Float32Array(COUNT*3);
-    for(let i=0;i<COUNT;i++){
-      const theta=Math.random()*Math.PI*2;
-      const phi=Math.acos(2*Math.random()-1);
-      const r=1.1+Math.random()*1.5;
-      pPos[i*3]  =ico.position.x+r*Math.sin(phi)*Math.cos(theta);
-      pPos[i*3+1]=r*Math.sin(phi)*Math.sin(theta);
-      pPos[i*3+2]=r*Math.cos(phi);
-    }
-    const pGeo=new THREE.BufferGeometry();
-    pGeo.setAttribute('position',new THREE.BufferAttribute(pPos,3));
-    const pMat=new THREE.PointsMaterial({
-      color:0xff6622,size:0.016,sizeAttenuation:true,transparent:true,opacity:0.48
-    });
-    const particles=new THREE.Points(pGeo,pMat);
-    group.add(particles);
+  // Low-poly icosahedron — center-right of frame
+  const icoGeo=new THREE.IcosahedronGeometry(0.72,1);
+  const icoMat=new THREE.MeshStandardMaterial({
+    color:0x1a0c04,metalness:0.88,roughness:0.18,emissive:0x3d1400,emissiveIntensity:0.55
+  });
+  const ico=new THREE.Mesh(icoGeo,icoMat);
+  ico.position.set(1.05,0,0);
+  group.add(ico);
 
-    // Mouse parallax via GSAP
-    const parallax={rx:0,ry:0};
-    hero.addEventListener('mousemove',e=>{
-      const rc=hero.getBoundingClientRect();
-      const nx=(e.clientX-rc.left)/rc.width-0.5;
-      const ny=(e.clientY-rc.top)/rc.height-0.5;
-      gsap.to(parallax,{rx:-ny*0.28,ry:nx*0.28,duration:1.8,ease:'power2.out',overwrite:'auto'});
-    });
+  // Particle field orbiting the object
+  const COUNT=280;
+  const pPos=new Float32Array(COUNT*3);
+  for(let i=0;i<COUNT;i++){
+    const theta=Math.random()*Math.PI*2;
+    const phi=Math.acos(2*Math.random()-1);
+    const r=1.1+Math.random()*1.5;
+    pPos[i*3]  =ico.position.x+r*Math.sin(phi)*Math.cos(theta);
+    pPos[i*3+1]=r*Math.sin(phi)*Math.sin(theta);
+    pPos[i*3+2]=r*Math.cos(phi);
+  }
+  const pGeo=new THREE.BufferGeometry();
+  pGeo.setAttribute('position',new THREE.BufferAttribute(pPos,3));
+  const pMat=new THREE.PointsMaterial({
+    color:0xff6622,size:0.016,sizeAttenuation:true,transparent:true,opacity:0.48
+  });
+  const particles=new THREE.Points(pGeo,pMat);
+  group.add(particles);
 
-    // Animation loop
-    const clock=new THREE.Clock();
-    (function animate(){
-      requestAnimationFrame(animate);
-      const t=clock.getElapsedTime();
-      ico.rotation.y=t*0.18;
-      ico.rotation.x=Math.sin(t*0.11)*0.12;
-      particles.rotation.y=t*0.032;
-      particles.rotation.x=Math.sin(t*0.07)*0.04;
-      group.rotation.x=parallax.rx;
-      group.rotation.y=parallax.ry;
-      renderer.render(scene,camera);
-    })();
+  // Mouse parallax — gsap is a window global from the CDN script in <head>
+  const parallax={rx:0,ry:0};
+  hero.addEventListener('mousemove',e=>{
+    const rc=hero.getBoundingClientRect();
+    const nx=(e.clientX-rc.left)/rc.width-0.5;
+    const ny=(e.clientY-rc.top)/rc.height-0.5;
+    window.gsap.to(parallax,{rx:-ny*0.28,ry:nx*0.28,duration:1.8,ease:'power2.out',overwrite:'auto'});
+  });
 
-    // Resize
-    window.addEventListener('resize',()=>{
-      camera.aspect=window.innerWidth/window.innerHeight;
-      camera.updateProjectionMatrix();
-      renderer.setSize(window.innerWidth,window.innerHeight,false);
-    });
+  // Animation loop
+  const clock=new THREE.Clock();
+  (function animate(){
+    requestAnimationFrame(animate);
+    const t=clock.getElapsedTime();
+    ico.rotation.y=t*0.18;
+    ico.rotation.x=Math.sin(t*0.11)*0.12;
+    particles.rotation.y=t*0.032;
+    particles.rotation.x=Math.sin(t*0.07)*0.04;
+    group.rotation.x=parallax.rx;
+    group.rotation.y=parallax.ry;
+    renderer.render(scene,camera);
   })();
+
+  // Resize
+  window.addEventListener('resize',()=>{
+    camera.aspect=window.innerWidth/window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth,window.innerHeight,false);
+  });
   </script>
 </body>
 </html>
