@@ -884,65 +884,6 @@
   const hero=document.getElementById('hero');
   if(!canvas||!hero)throw 0;
 
-  // Procedural leather texture — brown base, grain pores, seam lines, lacing
-  function makeFootballTexture(){
-    const S=1024;
-    const cv=document.createElement('canvas');
-    cv.width=S; cv.height=S;
-    const c=cv.getContext('2d');
-
-    // Leather base: warm dark brown, darker at edges
-    const grad=c.createRadialGradient(S*.5,S*.5,0,S*.5,S*.5,S*.7);
-    grad.addColorStop(0,'#7A3B1E');
-    grad.addColorStop(0.55,'#5C2A10');
-    grad.addColorStop(1,'#351508');
-    c.fillStyle=grad; c.fillRect(0,0,S,S);
-
-    // Grain pores
-    for(let i=0;i<6000;i++){
-      c.fillStyle=`rgba(0,0,0,${Math.random()*.06})`;
-      c.beginPath(); c.arc(Math.random()*S,Math.random()*S,Math.random()*1.6,0,Math.PI*2); c.fill();
-    }
-    for(let i=0;i<2500;i++){
-      c.fillStyle=`rgba(140,70,20,${Math.random()*.05})`;
-      c.beginPath(); c.arc(Math.random()*S,Math.random()*S,Math.random()*.8,0,Math.PI*2); c.fill();
-    }
-
-    // Seam lines — dark, wide, soft edges
-    c.strokeStyle='#1C0904'; c.lineWidth=8; c.lineCap='round';
-
-    // Horizontal equator seam
-    c.beginPath(); c.moveTo(0,S*.5); c.lineTo(S,S*.5); c.stroke();
-
-    // Left pole-to-pole curved seam
-    c.beginPath();
-    c.moveTo(S*.22,0);
-    c.bezierCurveTo(S*.32,S*.22,S*.32,S*.78,S*.22,S);
-    c.stroke();
-
-    // Right pole-to-pole curved seam
-    c.beginPath();
-    c.moveTo(S*.78,0);
-    c.bezierCurveTo(S*.68,S*.22,S*.68,S*.78,S*.78,S);
-    c.stroke();
-
-    // Lacing — cream/ivory, centered
-    c.strokeStyle='#E8CFA0'; c.lineCap='round';
-
-    // Vertical spine
-    c.lineWidth=2.5;
-    c.beginPath(); c.moveTo(S*.5,S*.27); c.lineTo(S*.5,S*.73); c.stroke();
-
-    // Horizontal lace ties
-    c.lineWidth=2;
-    for(let i=0;i<7;i++){
-      const y=S*.30+i*(S*.062);
-      c.beginPath(); c.moveTo(S*.43,y); c.lineTo(S*.57,y); c.stroke();
-    }
-
-    return new THREE.CanvasTexture(cv);
-  }
-
   // Renderer
   const renderer=new THREE.WebGLRenderer({canvas,antialias:true});
   renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
@@ -954,51 +895,44 @@
   const camera=new THREE.PerspectiveCamera(70,window.innerWidth/window.innerHeight,0.1,100);
   camera.position.set(0,0,3);
 
-  // Group for mouse parallax
+  // Group lets mouse parallax rotate everything together
   const group=new THREE.Group();
   scene.add(group);
 
-  // Lighting rig (CLAUDE.md standard + warm cinematic rims)
-  const ambientLight=new THREE.AmbientLight(0xffffff,0.22);
-  const directionalLight=new THREE.DirectionalLight(0xffffff,0.9);
-  directionalLight.position.set(2,3,2);
-  const pointLight=new THREE.PointLight(0xff6600,1.4,10);   // key orange
-  pointLight.position.set(-2,1.5,2);
-  const rimLight=new THREE.PointLight(0xff3800,1.6,6);      // hot rim
-  rimLight.position.set(1.5,-1.2,1.5);
+  // Lighting rig (CLAUDE.md standard + cinematic rim)
+  const ambientLight=new THREE.AmbientLight(0xffffff,0.3);
+  const directionalLight=new THREE.DirectionalLight(0xffffff,1.2);
+  directionalLight.position.set(2,3,1);
+  const pointLight=new THREE.PointLight(0xff6600,0.8,10);
+  pointLight.position.set(-2,1,2);
+  const rimLight=new THREE.PointLight(0xff4400,2.0,5);
+  rimLight.position.set(0.8,0.6,1.8);
   scene.add(ambientLight,directionalLight,pointLight,rimLight);
 
-  // Football — prolate spheroid, centered, slightly transparent for text readability
-  const footballGeo=new THREE.SphereGeometry(0.72,64,64);
-  const footballMat=new THREE.MeshStandardMaterial({
-    map:makeFootballTexture(),
-    roughness:0.88,
-    metalness:0.04,
-    emissive:0x190700,
-    emissiveIntensity:0.15,
-    transparent:true,
-    opacity:0.80,
+  // Low-poly icosahedron — center-right of frame
+  const icoGeo=new THREE.IcosahedronGeometry(0.72,1);
+  const icoMat=new THREE.MeshStandardMaterial({
+    color:0x1a0c04,metalness:0.88,roughness:0.18,emissive:0x3d1400,emissiveIntensity:0.55
   });
-  const football=new THREE.Mesh(footballGeo,footballMat);
-  football.scale.set(0.82,1.18,0.82); // oval prolate shape
-  football.rotation.z=0.28;           // slight natural tilt
-  group.add(football);
+  const ico=new THREE.Mesh(icoGeo,icoMat);
+  ico.position.set(1.05,0,0);
+  group.add(ico);
 
-  // Particle field — centered around origin
+  // Particle field orbiting the object
   const COUNT=280;
   const pPos=new Float32Array(COUNT*3);
   for(let i=0;i<COUNT;i++){
     const theta=Math.random()*Math.PI*2;
     const phi=Math.acos(2*Math.random()-1);
-    const r=1.1+Math.random()*1.6;
-    pPos[i*3]  =r*Math.sin(phi)*Math.cos(theta);
+    const r=1.1+Math.random()*1.5;
+    pPos[i*3]  =ico.position.x+r*Math.sin(phi)*Math.cos(theta);
     pPos[i*3+1]=r*Math.sin(phi)*Math.sin(theta);
     pPos[i*3+2]=r*Math.cos(phi);
   }
   const pGeo=new THREE.BufferGeometry();
   pGeo.setAttribute('position',new THREE.BufferAttribute(pPos,3));
   const pMat=new THREE.PointsMaterial({
-    color:0xff6622,size:0.013,sizeAttenuation:true,transparent:true,opacity:0.42
+    color:0xff6622,size:0.016,sizeAttenuation:true,transparent:true,opacity:0.48
   });
   const particles=new THREE.Points(pGeo,pMat);
   group.add(particles);
@@ -1009,7 +943,7 @@
     const rc=hero.getBoundingClientRect();
     const nx=(e.clientX-rc.left)/rc.width-0.5;
     const ny=(e.clientY-rc.top)/rc.height-0.5;
-    window.gsap.to(parallax,{rx:-ny*0.25,ry:nx*0.25,duration:1.8,ease:'power2.out',overwrite:'auto'});
+    window.gsap.to(parallax,{rx:-ny*0.28,ry:nx*0.28,duration:1.8,ease:'power2.out',overwrite:'auto'});
   });
 
   // Animation loop
@@ -1017,10 +951,10 @@
   (function animate(){
     requestAnimationFrame(animate);
     const t=clock.getElapsedTime();
-    football.rotation.y=t*0.13;
-    football.rotation.x=Math.sin(t*0.09)*0.07;
-    particles.rotation.y=t*0.026;
-    particles.rotation.x=Math.sin(t*0.06)*0.03;
+    ico.rotation.y=t*0.18;
+    ico.rotation.x=Math.sin(t*0.11)*0.12;
+    particles.rotation.y=t*0.032;
+    particles.rotation.x=Math.sin(t*0.07)*0.04;
     group.rotation.x=parallax.rx;
     group.rotation.y=parallax.ry;
     renderer.render(scene,camera);
